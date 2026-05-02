@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Starlelab | Independent Product Studio</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- GSAP for Animations -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+    <!-- Three.js for 3D Background -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg-color: #050505;
+            --text-main: #ffffff;
+            --accent: #3b82f6; /* Subtle blue accent */
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            overflow-x: hidden;
+            margin: 0;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #050505; }
+        ::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
+
+        /* Canvas Background */
+        #bg-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.25;
+        }
+
+        /* Glassmorphism */
+        .glass-panel {
+            background: rgba(10, 10, 10, 0.6);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        /* Loader */
+        #loader {
+            position: fixed;
+            inset: 0;
+            background: #050505;
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.8s ease;
+        }
+
+        /* Typography Utilities */
+        .text-gradient {
+            background: linear-gradient(to right, #fff, #888);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+    </style>
+</head>
+<body class="selection:bg-white selection:text-black">
+
+    <!-- Loading Screen -->
+    <div id="loader">
+        <div class="flex flex-col items-center gap-4">
+            <img src="./starlelabV2.png" alt="Starlelab" class="h-10 w-auto animate-pulse" onerror="this.style.display='none'">
+            <div class="text-[10px] tracking-[0.4em] uppercase text-gray-600">Initializing...</div>
+        </div>
+    </div>
+
+    <!-- 3D Background -->
+    <canvas id="bg-canvas"></canvas>
+
+    <!-- Navigation -->
+    <nav class="fixed w-full z-50 top-0 transition-all duration-300 py-6 glass-panel" id="navbar">
+        <div class="max-w-7xl mx-auto px-6 lg:px-8">
+            <div class="flex items-center justify-between">
+                <!-- Logo Container: Always shows Text, adds Image if available -->
+                <a href="#" class="group flex items-center gap-4">
+                    <!-- Local Logo Attempt -->
+                    <img src="./starlelabV2.png" alt="" class="h-8 w-auto opacity-90 group-hover:opacity-100 transition-opacity" onerror="this.style.display='none'">
+                    <!-- Always Visible Text Name -->
+                    <span class="text-xl font-bold tracking-tight text-white">STARLELAB</span>
+                </a>
+                
+                <!-- Menu -->
+                <div class="hidden md:flex space-x-12">
+                    <a href="#products" class="text-xs uppercase tracking-widest text-gray-400 hover:text-white transition-colors">Products</a>
+                    <a href="#philosophy" class="text-xs uppercase tracking-widest text-gray-400 hover:text-white transition-colors">Philosophy</a>
+                    <a href="#contact" class="text-xs uppercase tracking-widest text-white border-b border-transparent hover:border-white pb-0.5 transition-all">Contact</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="min-h-screen flex flex-col justify-center pt-20 relative">
+        <div class="max-w-7xl mx-auto px-6 lg:px-8 w-full">
+            <div class="hero-content opacity-0 translate-y-10">
+                <div class="inline-block mb-6 px-3 py-1 border border-white/10 rounded-full bg-white/5 backdrop-blur-sm">
+                    <span class="text-[10px] uppercase tracking-widest text-gray-300">Independent Product Studio</span>
+                </div>
+                <h1 class="text-6xl md:text-8xl lg:text-9xl font-bold tracking-tighter leading-[0.9] mb-8">
+                    CRAFTING<br>
+                    <span class="text-gradient">LEGACIES</span>
+                </h1>
+                <p class="text-lg md:text-xl text-gray-400 max-w-2xl leading-relaxed mb-12">
+                    We are not an agency. We are creators. Like Valve or Adobe, we focus exclusively on developing our own high-end products and gaming universes.
+                </p>
+            </div>
+        </div>
+        
+        <!-- Decorative Line -->
+        <div class="absolute bottom-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
+    </section>
+
+    <!-- Philosophy / About -->
+    <section id="philosophy" class="py-32 relative">
+        <div class="max-w-7xl mx-auto px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-20">
+                <div class="philosophy-text opacity-0">
+                    <h2 class="text-3xl md:text-5xl font-bold tracking-tight mb-8">THE VALVE MODEL</h2>
+                    <p class="text-gray-400 text-lg leading-relaxed mb-6">
+                        Starlelab operates as a closed product laboratory. We have no clients, because our only client is the user of our final product.
+                    </p>
+                    <p class="text-gray-400 text-lg leading-relaxed">
+                        We take the time to perfect mechanics and refine interfaces to intuitive levels. We only release what we are proud of.
+                    </p>
+                </div>
+                <div class="relative h-full min-h-[300px] rounded-lg overflow-hidden opacity-0 philosophy-img">
+                    <!-- Placeholder for a conceptual abstract tech image if photo.png is not suitable here, but using local logic -->
+                    <img src="./Valve_Lobby_2016.jpg" alt="Studio Atmosphere" class="absolute inset-0 w-full h-full object-cover opacity-60 grayscale hover:grayscale-0 transition-all duration-700" onerror="this.style.display='none'; this.parentElement.innerHTML='<div class=\'w-full h-full bg-neutral-900 flex items-center justify-center text-neutral-700 text-xs uppercase tracking-widest\'>Internal Lab View</div>'">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Products Showcase -->
+    <section id="products" class="py-32 bg-[#080808] border-t border-white/5">
+        <div class="max-w-7xl mx-auto px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row justify-between items-end mb-20">
+                <h2 class="text-4xl md:text-6xl font-bold tracking-tight">OUR WORKS</h2>
+                <p class="text-gray-500 text-sm mt-4 md:mt-0 uppercase tracking-widest">Selected Works 2024-2026</p>
+            </div>
+
+            <div class="space-y-32">
+                <!-- Product 1 -->
+                <!-- REPLACE '#' WITH YOUR PROJECT LINK -->
+                <a href="#" class="product-item group block opacity-0 cursor-pointer">
+                    <div class="aspect-video w-full overflow-hidden rounded-sm bg-neutral-900 relative mb-8">
+                        <img src="./" alt="Flagship Product" class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-1000 opacity-80">
+                        <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-black/40 backdrop-blur-[2px]">
+                            <span class="border border-white px-6 py-2 text-sm uppercase tracking-widest hover:bg-white hover:text-black transition-colors">View Project</span>
+                        </div>
+                    </div>
+                    <div class="flex justify-between items-start border-b border-white/10 pb-8">
+                        <div>
+                            <h3 class="text-2xl font-bold mb-2 group-hover:text-indigo-400 transition-colors">floorblind</h3>
+                            <p class="text-gray-500 max-w-md">a horror game where the goal is to escape while something is chasing you</p>
+                        </div>
+                        <span class="text-xs font-mono text-gray-600">001</span>
+                    </div>
+                </a>
+
+                <!-- Product 2 -->
+                <!-- REPLACE '#' WITH YOUR PROJECT LINK -->
+                <a href="#" class="product-item group block opacity-0 cursor-pointer md:pl-24">
+                    <div class="aspect-video w-full overflow-hidden rounded-sm bg-neutral-900 relative mb-8">
+                        <img src="./photo2.png" alt="Software Suite" class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-1000 opacity-80">
+                         <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-black/40 backdrop-blur-[2px]">
+                            <span class="border border-white px-6 py-2 text-sm uppercase tracking-widest hover:bg-white hover:text-black transition-colors">View Project</span>
+                        </div>
+                    </div>
+                    <div class="flex justify-between items-start border-b border-white/10 pb-8">
+                        <div>
+                            <h3 class="text-2xl font-bold mb-2 group-hover:text-indigo-400 transition-colors">nebula suite</h3>
+                            <p class="text-gray-500 max-w-md">Professional video editing suite. Advanced color grading, real-time effects</p>
+                        </div>
+                        <span class="text-xs font-mono text-gray-600">002</span>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="py-32 relative overflow-hidden">
+        <!-- Glow effect -->
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-blue-900/10 rounded-full blur-[120px] pointer-events-none"></div>
+
+        <div class="max-w-3xl mx-auto px-6 lg:px-8 relative z-10 text-center">
+            <h2 class="text-4xl md:text-6xl font-bold tracking-tighter mb-8 contact-title opacity-0">HAVE AN IDEA?</h2>
+            <p class="text-gray-400 text-lg mb-12 contact-subtitle opacity-0">
+                We do not accept freelance orders. However, we are always open to talented individuals who want to join the team, or investors who share our vision.
+            </p>
+
+            <div class="glass-panel p-8 md:p-12 text-left contact-form opacity-0">
+                <form action="https://formspree.io/f/gplyno@gmail.com" method="POST" class="space-y-8">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div class="group">
+                            <label class="block text-[10px] uppercase tracking-widest text-gray-500 mb-2 group-focus-within:text-white transition-colors">Name</label>
+                            <input type="text" name="name" required class="w-full bg-transparent border-b border-gray-800 py-3 text-white focus:outline-none focus:border-white transition-colors placeholder-gray-800" placeholder="Your Name">
+                        </div>
+                        <div class="group">
+                            <label class="block text-[10px] uppercase tracking-widest text-gray-500 mb-2 group-focus-within:text-white transition-colors">Email</label>
+                            <input type="email" name="email" required class="w-full bg-transparent border-b border-gray-800 py-3 text-white focus:outline-none focus:border-white transition-colors placeholder-gray-800" placeholder="mail@example.com">
+                        </div>
+                    </div>
+                    
+                    <div class="group">
+                        <label class="block text-[10px] uppercase tracking-widest text-gray-500 mb-2 group-focus-within:text-white transition-colors">Subject</label>
+                        <select name="subject" class="w-full bg-transparent border-b border-gray-800 py-3 text-white focus:outline-none focus:border-white transition-colors appearance-none cursor-pointer">
+                            <option value="Join Team" class="bg-black">Joining the Team</option>
+                            <option value="Partnership" class="bg-black">Partnership / Investment</option>
+                            <option value="Other" class="bg-black">Other</option>
+                        </select>
+                    </div>
+
+                    <div class="group">
+                        <label class="block text-[10px] uppercase tracking-widest text-gray-500 mb-2 group-focus-within:text-white transition-colors">Message</label>
+                        <textarea name="message" rows="4" required class="w-full bg-transparent border-b border-gray-800 py-3 text-white focus:outline-none focus:border-white transition-colors resize-none placeholder-gray-800" placeholder="Tell us more..."></textarea>
+                    </div>
+
+                    <button type="submit" class="w-full bg-white text-black font-bold py-5 uppercase tracking-widest hover:bg-gray-200 transition-colors mt-4">
+                        Send Message
+                    </button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="border-t border-white/5 py-12 bg-black">
+        <div class="max-w-7xl mx-auto px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-6">
+            <div class="flex items-center gap-4">
+                <img src="./starlelabV2.png" alt="Logo" class="h-6 w-auto opacity-40 grayscale" onerror="this.style.display='none'">
+                <span class="text-sm text-gray-600 font-medium">&copy; 2026 STARLELAB. ALL RIGHTS RESERVED.</span>
+            </div>
+            
+            <!-- Social Media Links (Placeholders) -->
+            <div class="flex gap-8">
+                <!-- Replace # with your actual links -->
+                <a href="#" target="_blank" class="text-gray-600 hover:text-white transition-colors text-xs uppercase tracking-wider">Twitter / X</a>
+                <a href="#" target="_blank" class="text-gray-600 hover:text-white transition-colors text-xs uppercase tracking-wider">LinkedIn</a>
+                <a href="#" target="_blank" class="text-gray-600 hover:text-white transition-colors text-xs uppercase tracking-wider">Discord</a>
+                <a href="#" target="_blank" class="text-gray-600 hover:text-white transition-colors text-xs uppercase tracking-wider">GitHub</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // --- 1. Loader Logic ---
+        window.addEventListener('load', () => {
+            const loader = document.getElementById('loader');
+            // Small delay to ensure smooth transition
+            setTimeout(() => {
+                loader.style.opacity = '0';
+                setTimeout(() => {
+                    loader.style.display = 'none';
+                    initAnimations();
+                }, 800);
+            }, 500);
+        });
+
+        // --- 2. Three.js Background (Subtle Tech Grid) ---
+        function initThreeJS() {
+            const canvas = document.querySelector('#bg-canvas');
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            const renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
+            
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+            // Create Particles
+            const geometry = new THREE.BufferGeometry();
+            const count = 600;
+            const positions = new Float32Array(count * 3);
+
+            for(let i = 0; i < count; i++) {
+                positions[i * 3] = (Math.random() - 0.5) * 30;
+                positions[i * 3 + 1] = (Math.random() - 0.5) * 30;
+                positions[i * 3 + 2] = (Math.random() - 0.5) * 30;
+            }
+
+            geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+
+            const material = new THREE.PointsMaterial({
+                size: 0.05,
+                color: 0x444444,
+                transparent: true,
+                opacity: 0.6,
+                sizeAttenuation: true
+            });
+
+            const particles = new THREE.Points(geometry, material);
+            scene.add(particles);
+
+            camera.position.z = 8;
+
+            let mouseX = 0;
+            let mouseY = 0;
+            let targetX = 0;
+            let targetY = 0;
+
+            const windowHalfX = window.innerWidth / 2;
+            const windowHalfY = window.innerHeight / 2;
+
+            document.addEventListener('mousemove', (event) => {
+                mouseX = (event.clientX - windowHalfX);
+                mouseY = (event.clientY - windowHalfY);
+            });
+
+            const clock = new THREE.Clock();
+
+            const tick = () => {
+                const elapsedTime = clock.getElapsedTime();
+
+                targetX = mouseX * 0.0005;
+                targetY = mouseY * 0.0005;
+
+                particles.rotation.y += 0.02 * (targetX - particles.rotation.y);
+                particles.rotation.x += 0.02 * (targetY - particles.rotation.x);
+
+                // Slow drift
+                particles.rotation.z = Math.sin(elapsedTime * 0.1) * 0.05;
+
+                renderer.render(scene, camera);
+                window.requestAnimationFrame(tick);
+            }
+
+            tick();
+
+            window.addEventListener('resize', () => {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+            });
+        }
+
+        initThreeJS();
+
+        // --- 3. GSAP Animations ---
+        function initAnimations() {
+            gsap.registerPlugin(ScrollTrigger);
+
+            // Hero Content
+            gsap.to('.hero-content', {
+                opacity: 1,
+                y: 0,
+                duration: 1.5,
+                ease: "power3.out",
+                delay: 0.2
+            });
+
+            // Philosophy Section
+            gsap.to('.philosophy-text', {
+                scrollTrigger: { trigger: '#philosophy', start: 'top 75%' },
+                opacity: 1,
+                x: 0,
+                duration: 1
+            });
+            
+            gsap.to('.philosophy-img', {
+                scrollTrigger: { trigger: '#philosophy', start: 'top 75%' },
+                opacity: 1,
+                x: 0,
+                duration: 1.2,
+                delay: 0.2
+            });
+
+            // Products Stagger
+            gsap.utils.toArray('.product-item').forEach((item, i) => {
+                gsap.fromTo(item, 
+                    { opacity: 0, y: 50 },
+                    {
+                        scrollTrigger: { trigger: item, start: 'top 85%' },
+                        opacity: 1,
+                        y: 0,
+                        duration: 1.2,
+                        ease: "power3.out"
+                    }
+                );
+            });
+
+            // Contact Section
+            gsap.to('.contact-title', {
+                scrollTrigger: { trigger: '#contact', start: 'top 70%' },
+                opacity: 1,
+                y: 0,
+                duration: 0.8
+            });
+            
+            gsap.to('.contact-subtitle', {
+                scrollTrigger: { trigger: '#contact', start: 'top 70%' },
+                opacity: 1,
+                y: 0,
+                duration: 0.8,
+                delay: 0.1
+            });
+
+            gsap.to('.contact-form', {
+                scrollTrigger: { trigger: '#contact', start: 'top 60%' },
+                opacity: 1,
+                y: 0,
+                duration: 1,
+                delay: 0.2
+            });
+        }
+
+        // Smooth Scroll for Anchors
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+    </script>
+</body>
+</html>
+
