@@ -1,1290 +1,1184 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>STARLELAB — независимая студия разработки игр</title>
-<meta name="description" content="STARLELAB — инди-студия. один проект, собственный движок, много души. игра zombotanic уже на itch.io.">
-<link rel="icon" href="photo.png">
-<link rel="alternate icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' fill='%230b0b0f'/><rect x='6' y='6' width='20' height='20' fill='none' stroke='%23fa5c5c' stroke-width='3'/><rect x='13' y='13' width='6' height='6' fill='%23fa5c5c'/></svg>">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>starlelab</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/unbounded@latest/latin-400.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/unbounded@latest/cyrillic-400.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/unbounded@latest/latin-700.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/unbounded@latest/cyrillic-700.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/unbounded@latest/latin-900.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/unbounded@latest/cyrillic-900.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/golos-text@latest/latin-400.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/golos-text@latest/cyrillic-400.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/golos-text@latest/latin-500.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/golos-text@latest/cyrillic-500.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/golos-text@latest/latin-600.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/golos-text@latest/cyrillic-600.css">
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: #0a0a0a;
+            color: #e0e0e0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
 
-<style>
-:root{
-  --bg:#0b0b0f;
-  --bg2:#101017;
-  --panel:#14141d;
-  --panel2:#191924;
-  --line:rgba(242,241,237,.09);
-  --line-strong:rgba(242,241,237,.18);
-  --text:#f2f1ed;
-  --muted:#9a99a4;
-  --dim:#6d6c78;
-  --accent:#fa5c5c;
-  --accent-soft:rgba(250,92,92,.14);
-  --cream:#efe6d6;
-  --ok:#5cd68a;
-  --warn:#e6b455;
-  --disp:'Unbounded',system-ui,sans-serif;
-  --body:'Golos Text',system-ui,sans-serif;
-  --ease:cubic-bezier(.22,1,.36,1);
-}
-*{margin:0;padding:0;box-sizing:border-box}
-html{scroll-behavior:smooth}
-body{
-  background:var(--bg);
-  color:var(--text);
-  font-family:var(--body);
-  font-size:17px;
-  line-height:1.6;
-  overflow-x:hidden;
-  -webkit-font-smoothing:antialiased;
-}
-::selection{background:var(--accent);color:#140505}
-::-webkit-scrollbar{width:10px}
-::-webkit-scrollbar-track{background:var(--bg)}
-::-webkit-scrollbar-thumb{background:#26262f;border-radius:5px}
-::-webkit-scrollbar-thumb:hover{background:var(--accent)}
-a{color:inherit;text-decoration:none}
-button{font-family:inherit;cursor:pointer}
-:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+        .topbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 56px;
+            background: #1a1a1a;
+            border-bottom: 1px solid #2a2a2a;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            padding: 0 30px;
+            gap: 20px;
+        }
 
-#progress{
-  position:fixed;top:0;left:0;height:3px;width:0%;
-  background:linear-gradient(90deg,var(--accent),#ff9a7a);
-  z-index:1200;transition:width .1s linear;
-}
+        .topbar .version {
+            color: #aaa;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
 
-/* ---------- header ---------- */
-.site-head{
-  position:fixed;top:0;left:0;right:0;z-index:1000;
-  display:flex;align-items:center;justify-content:space-between;
-  padding:18px clamp(20px,4vw,52px);
-  transition:background .4s,border-color .4s,padding .4s;
-  border-bottom:1px solid transparent;
-}
-.site-head.scrolled{
-  background:rgba(11,11,15,.82);
-  backdrop-filter:blur(14px);
-  border-bottom-color:var(--line);
-  padding-top:12px;padding-bottom:12px;
-}
-.logo{display:flex;align-items:center;gap:12px;font-family:var(--disp);font-weight:700;font-size:15px;letter-spacing:.08em}
-.logo-frame{
-  width:32px;height:32px;position:relative;flex:none;
-  border:2px solid var(--accent);border-radius:5px;overflow:hidden;
-  background:var(--panel);
-  transition:transform .5s var(--ease);
-}
-.logo-frame img{width:100%;height:100%;object-fit:cover;display:block}
-.logo-frame.no-img::after{
-  content:"";position:absolute;inset:6px;background:var(--accent);
-  transform:scale(.45);transition:transform .5s var(--ease);
-}
-.logo:hover .logo-frame{transform:rotate(90deg)}
-.logo:hover .logo-frame.no-img::after{transform:scale(1)}
-.nav{display:flex;gap:clamp(16px,3vw,36px)}
-.nav a{
-  font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);
-  position:relative;padding:4px 0;transition:color .3s;
-}
-.nav a::after{
-  content:"";position:absolute;left:0;bottom:0;height:1px;width:100%;
-  background:var(--accent);transform:scaleX(0);transform-origin:right;
-  transition:transform .45s var(--ease);
-}
-.nav a:hover{color:var(--text)}
-.nav a:hover::after{transform:scaleX(1);transform-origin:left}
-.status-chip{
-  display:flex;align-items:center;gap:9px;
-  font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);
-  border:1px solid var(--line-strong);border-radius:999px;padding:8px 16px;
-  background:rgba(20,20,29,.6);
-}
-.pulse-dot{width:8px;height:8px;border-radius:50%;background:var(--accent);flex:none;animation:pulse 2s infinite}
-.pulse-dot.ok{background:var(--ok)}
-.pulse-dot.warn{background:var(--warn)}
-@keyframes pulse{
-  0%{box-shadow:0 0 0 0 rgba(250,92,92,.5)}
-  70%{box-shadow:0 0 0 9px rgba(250,92,92,0)}
-  100%{box-shadow:0 0 0 0 rgba(250,92,92,0)}
-}
-@media(max-width:820px){.nav{display:none}.status-chip{display:none}}
+        .topbar .version:hover {
+            color: #fff;
+        }
 
-/* ---------- hero ---------- */
-.hero{
-  position:relative;min-height:100svh;
-  display:flex;flex-direction:column;justify-content:center;
-  padding:clamp(110px,14vh,160px) clamp(20px,4vw,52px) clamp(60px,8vh,90px);
-  overflow:hidden;
-}
-.hero-grid-bg{
-  position:absolute;inset:0;pointer-events:none;
-  background-image:
-    linear-gradient(var(--line) 1px,transparent 1px),
-    linear-gradient(90deg,var(--line) 1px,transparent 1px);
-  background-size:76px 76px;
-  mask-image:radial-gradient(ellipse 90% 80% at 40% 45%,#000 20%,transparent 78%);
-  -webkit-mask-image:radial-gradient(ellipse 90% 80% at 40% 45%,#000 20%,transparent 78%);
-  opacity:.55;
-}
-#glow{
-  position:absolute;width:640px;height:640px;left:0;top:0;pointer-events:none;
-  background:radial-gradient(circle,rgba(250,92,92,.11) 0%,rgba(250,92,92,.04) 40%,transparent 68%);
-  transform:translate(-50%,-50%);opacity:0;transition:opacity 1s;
-}
-.cross{position:absolute;width:22px;height:22px;pointer-events:none;opacity:.6}
-.cross::before,.cross::after{content:"";position:absolute;background:var(--accent)}
-.cross::before{left:50%;top:0;width:1.5px;height:100%;transform:translateX(-50%)}
-.cross::after{top:50%;left:0;height:1.5px;width:100%;transform:translateY(-50%)}
-.cross.c1{top:16%;left:6%}
-.cross.c2{top:24%;right:9%}
-.cross.c3{bottom:18%;left:12%}
-.cross.c4{bottom:26%;right:6%}
+        .topbar .version span {
+            color: #e0e0e0;
+            font-weight: 500;
+            border-bottom: 1px dashed #555;
+            padding-bottom: 2px;
+        }
 
-.hero-inner{position:relative;width:100%;max-width:1240px;margin:0 auto;z-index:2}
-.hero-eyebrow{
-  display:inline-flex;align-items:center;gap:14px;
-  font-size:13px;letter-spacing:.28em;text-transform:uppercase;color:var(--muted);
-  margin-bottom:clamp(24px,4vh,44px);
-}
-.hero-eyebrow .tick-line{width:56px;height:1px;background:var(--accent)}
-.hero-title{
-  font-family:var(--disp);font-weight:900;
-  font-size:clamp(44px,9.2vw,128px);
-  line-height:.98;letter-spacing:.01em;
-  color:var(--text);
-  text-transform:uppercase;
-  word-break:break-word;
-}
-.hero-title .accent-dot{color:var(--accent)}
-.hero-sub{
-  max-width:560px;margin-top:clamp(22px,3.4vh,36px);
-  font-size:clamp(16px,1.6vw,19px);color:var(--muted);line-height:1.7;
-}
-.hero-sub b{color:var(--text);font-weight:600}
-.hero-meta{display:flex;flex-wrap:wrap;gap:12px;margin-top:clamp(26px,4vh,42px)}
-.meta-chip{
-  display:inline-flex;align-items:center;gap:8px;
-  border:1px solid var(--line-strong);border-radius:999px;
-  padding:9px 18px;font-size:12.5px;letter-spacing:.12em;text-transform:uppercase;
-  color:var(--cream);background:rgba(20,20,29,.5);
-  transition:border-color .35s,transform .35s var(--ease),background .35s;
-}
-.meta-chip:hover{border-color:var(--accent);transform:translateY(-3px);background:var(--accent-soft)}
-.meta-chip i{width:6px;height:6px;background:var(--accent);border-radius:50%;font-style:normal}
-.hero-cta-row{display:flex;flex-wrap:wrap;gap:16px;margin-top:clamp(30px,4.5vh,48px)}
-.btn{
-  display:inline-flex;align-items:center;gap:12px;
-  font-family:var(--disp);font-weight:700;font-size:13px;letter-spacing:.1em;text-transform:uppercase;
-  padding:16px 30px;border-radius:2px;position:relative;overflow:hidden;
-  transition:color .35s,border-color .35s,transform .35s var(--ease),box-shadow .35s;
-}
-.btn .arr{transition:transform .35s var(--ease)}
-.btn:hover .arr{transform:translateX(6px)}
-.btn-solid{background:var(--accent);color:#140505;border:1px solid var(--accent)}
-.btn-solid:hover{transform:translateY(-3px);box-shadow:0 14px 34px rgba(250,92,92,.28)}
-.btn-ghost{border:1px solid var(--line-strong);color:var(--text);background:transparent}
-.btn-ghost:hover{border-color:var(--accent);color:var(--accent);transform:translateY(-3px)}
+        .topbar .version .loading {
+            color: #666;
+            font-weight: 300;
+            border-bottom: none;
+        }
 
-.badge{
-  position:absolute;right:clamp(14px,6vw,110px);top:clamp(90px,16vh,180px);
-  width:clamp(130px,15vw,190px);height:clamp(130px,15vw,190px);z-index:3;
-}
-.badge svg{width:100%;height:100%;animation:spin 32s linear infinite}
-.badge:hover svg{animation-duration:10s}
-@keyframes spin{to{transform:rotate(360deg)}}
-.badge text{font-family:var(--disp);font-size:11.5px;letter-spacing:3.5px;fill:var(--muted);text-transform:uppercase}
-.badge-core{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:2px}
-.badge-core .big{font-family:var(--disp);font-weight:900;font-size:clamp(26px,3vw,38px);color:var(--accent);line-height:1}
-.badge-core .small{font-size:10px;letter-spacing:.24em;text-transform:uppercase;color:var(--dim)}
-@media(max-width:900px){.badge{display:none}}
+        .topbar .history-link {
+            color: #777;
+            text-decoration: none;
+            font-size: 0.85rem;
+            cursor: pointer;
+            border-bottom: 1px dashed #444;
+            padding-bottom: 2px;
+            transition: color 0.2s;
+        }
 
-.hero-bottom{
-  position:absolute;left:clamp(20px,4vw,52px);right:clamp(20px,4vw,52px);bottom:26px;
-  display:flex;justify-content:space-between;align-items:flex-end;z-index:2;
-  max-width:1240px;margin:0 auto;gap:16px;flex-wrap:wrap;
-}
-.scroll-hint{display:flex;align-items:center;gap:14px;font-size:12px;letter-spacing:.24em;text-transform:uppercase;color:var(--dim)}
-.scroll-line{width:1px;height:52px;background:var(--line-strong);position:relative;overflow:hidden}
-.scroll-line::after{content:"";position:absolute;left:0;top:-100%;width:100%;height:100%;background:var(--accent);animation:dropLine 2.2s var(--ease) infinite}
-@keyframes dropLine{0%{top:-100%}55%{top:0}100%{top:100%}}
-.build-note{font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--dim);text-align:right}
-.build-note em{color:var(--accent);font-style:normal;font-weight:600}
+        .topbar .history-link:hover {
+            color: #ccc;
+        }
 
-/* ---------- ticker ---------- */
-.ticker{
-  border-top:1px solid var(--line);border-bottom:1px solid var(--line);
-  background:var(--bg2);overflow:hidden;padding:16px 0;position:relative;
-}
-.ticker-track{display:flex;width:max-content;animation:tickMove 30s linear infinite}
-.ticker:hover .ticker-track{animation-play-state:paused}
-@keyframes tickMove{to{transform:translateX(-50%)}}
-.ticker-item{
-  font-family:var(--disp);font-weight:400;font-size:13px;letter-spacing:.22em;text-transform:uppercase;
-  color:var(--muted);padding:0 28px;display:flex;align-items:center;gap:28px;white-space:nowrap;
-}
-.ticker-item .sep{color:var(--accent);font-size:15px}
+        .main {
+            margin-top: 56px;
+            margin-bottom: 160px;
+            padding: 40px 30px;
+            flex: 1;
+        }
 
-/* ---------- sections ---------- */
-section{position:relative}
-.wrap{max-width:1240px;margin:0 auto;padding:clamp(80px,11vw,140px) clamp(20px,4vw,52px)}
-.sec-label{
-  display:flex;align-items:center;gap:16px;margin-bottom:clamp(30px,4vw,48px);
-  font-size:12.5px;letter-spacing:.3em;text-transform:uppercase;color:var(--dim);
-}
-.sec-label .num{
-  font-family:var(--disp);font-weight:700;color:var(--accent);font-size:14px;
-  border:1px solid rgba(250,92,92,.4);padding:5px 12px;border-radius:2px;background:var(--accent-soft);
-}
-.sec-label .rule{flex:1;height:1px;background:var(--line)}
-.sec-title{
-  font-family:var(--disp);font-weight:900;text-transform:uppercase;
-  font-size:clamp(30px,4.6vw,58px);line-height:1.06;letter-spacing:.005em;
-}
-.mask-line{display:block;overflow:hidden;padding-bottom:.08em;margin-bottom:-.08em}
-.mask-line>span{display:inline-block;transform:translateY(118%);transition:transform 1s var(--ease)}
-.is-in .mask-line:nth-child(2)>span{transition-delay:.1s}
-.is-in .mask-line:nth-child(3)>span{transition-delay:.2s}
-.is-in .mask-line>span{transform:none}
-.sec-desc{max-width:640px;color:var(--muted);margin-top:22px;font-size:clamp(15px,1.4vw,18px)}
+        .main h1 {
+            font-size: 2rem;
+            font-weight: 400;
+            letter-spacing: -0.5px;
+            color: #e8e8e8;
+            margin-bottom: 16px;
+        }
 
-.rv{opacity:0;transform:translateY(34px);transition:opacity .9s var(--ease),transform .9s var(--ease)}
-.rv.is-in{opacity:1;transform:none}
-.rv-d1{transition-delay:.12s}.rv-d2{transition-delay:.24s}.rv-d3{transition-delay:.36s}.rv-d4{transition-delay:.48s}
+        .main p {
+            color: #aaa;
+            line-height: 1.7;
+            font-size: 1rem;
+            max-width: 700px;
+        }
 
-/* live data pulse on values being refreshed */
-[data-live]{transition:color .4s,opacity .4s}
-[data-live].dl-loading{opacity:.45}
-[data-live].dl-flash{animation:dlFlash 1.1s var(--ease)}
-@keyframes dlFlash{0%{color:var(--accent)}100%{color:inherit}}
+        .bottombar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: #1a1a1a;
+            border-top: 1px solid #2a2a2a;
+            padding: 20px 30px;
+            z-index: 100;
+            display: flex;
+            gap: 50px;
+            flex-wrap: wrap;
+            min-height: 100px;
+        }
 
-/* ---------- project ---------- */
-.project-head{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:24px}
-.only-one{
-  display:inline-flex;align-items:center;gap:10px;font-family:var(--disp);font-weight:700;font-size:12px;
-  letter-spacing:.18em;text-transform:uppercase;color:var(--cream);
-  border:1px dashed var(--line-strong);padding:12px 20px;border-radius:2px;
-}
-.only-one .dot{width:8px;height:8px;background:var(--accent);border-radius:50%;animation:pulse 2s infinite}
+        .bottombar .column {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            min-width: 100px;
+        }
 
-.embed-zone{margin-top:clamp(36px,5vw,60px);position:relative}
-.embed-frame{
-  position:relative;background:var(--panel);border:1px solid var(--line-strong);
-  border-radius:4px;overflow:hidden;
-  transition:border-color .5s,box-shadow .5s,transform .5s var(--ease);
-}
-.embed-frame:hover{border-color:rgba(250,92,92,.55);box-shadow:0 30px 80px rgba(0,0,0,.5),0 0 0 1px rgba(250,92,92,.15);transform:translateY(-4px)}
-.embed-bar{
-  display:flex;align-items:center;justify-content:space-between;gap:14px;
-  padding:13px 20px;border-bottom:1px solid var(--line);background:var(--panel2);
-}
-.embed-bar .dots{display:flex;gap:7px}
-.embed-bar .dots i{width:10px;height:10px;border-radius:50%;background:#2c2c38;display:block}
-.embed-bar .dots i:first-child{background:var(--accent)}
-.embed-bar .label{font-family:var(--disp);font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--muted)}
-.live-pill{display:flex;align-items:center;gap:8px;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);white-space:nowrap}
-.embed-body{display:flex;justify-content:center;padding:clamp(24px,4vw,48px);background:
-  repeating-linear-gradient(45deg,transparent 0 14px,rgba(255,255,255,.014) 14px 28px)}
-.embed-body iframe{width:100%;max-width:620px;height:167px;border:0;display:block}
-.embed-caption{
-  display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;
-  padding:13px 20px;border-top:1px solid var(--line);
-  font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);
-}
-.embed-caption b{color:var(--cream);font-weight:600}
-.frame-corner{position:absolute;width:26px;height:26px;border:2px solid var(--accent);z-index:2;transition:all .5s var(--ease)}
-.frame-corner.tl{top:-2px;left:-2px;border-right:0;border-bottom:0}
-.frame-corner.tr{top:-2px;right:-2px;border-left:0;border-bottom:0}
-.frame-corner.bl{bottom:-2px;left:-2px;border-right:0;border-top:0}
-.frame-corner.br{bottom:-2px;right:-2px;border-left:0;border-top:0}
-.embed-frame:hover .frame-corner{width:40px;height:40px}
+        .bottombar .column-title {
+            color: #666;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 4px;
+        }
 
-.project-grid{
-  display:grid;grid-template-columns:1.15fr .85fr;gap:clamp(28px,4vw,56px);
-  margin-top:clamp(44px,6vw,72px);
-}
-@media(max-width:900px){.project-grid{grid-template-columns:1fr}}
-.project-about h3{
-  font-family:var(--disp);font-weight:700;font-size:clamp(19px,2vw,24px);
-  margin-bottom:18px;line-height:1.35;
-}
-.project-about h3 span{color:var(--accent)}
-.project-about p{color:var(--muted);margin-bottom:16px}
-.project-about p b{color:var(--text);font-weight:600}
-.live-quote{
-  border-left:2px solid var(--accent);background:var(--accent-soft);
-  padding:16px 20px;margin:0 0 20px;border-radius:0 4px 4px 0;
-  color:var(--cream);font-style:italic;font-size:15.5px;line-height:1.6;
-}
-.live-quote .src{display:block;font-style:normal;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--dim);margin-top:10px}
-.tags{display:flex;flex-wrap:wrap;gap:10px;margin-top:26px}
-.tag{
-  font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--cream);
-  border:1px solid var(--line-strong);padding:8px 16px;border-radius:999px;
-  transition:all .35s var(--ease);
-}
-.tag:hover{border-color:var(--accent);color:var(--accent);transform:translateY(-2px);background:var(--accent-soft)}
-.tag.from-live{border-color:rgba(250,92,92,.45)}
+        .bottombar .link {
+            color: #999;
+            text-decoration: none;
+            font-size: 0.95rem;
+            transition: color 0.2s;
+            cursor: pointer;
+            background: none;
+            border: none;
+            padding: 0;
+            text-align: left;
+        }
 
-.facts{border:1px solid var(--line);border-radius:4px;background:var(--panel);overflow:hidden}
-.facts-head{
-  padding:16px 22px;border-bottom:1px solid var(--line);
-  font-family:var(--disp);font-size:12px;letter-spacing:.24em;text-transform:uppercase;color:var(--muted);
-  display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;
-}
-.fact-row{
-  display:flex;justify-content:space-between;align-items:baseline;gap:16px;
-  padding:15px 22px;border-bottom:1px solid var(--line);
-  transition:background .3s,padding-left .3s var(--ease);
-}
-.fact-row:last-child{border-bottom:0}
-.fact-row:hover{background:var(--panel2);padding-left:30px}
-.fact-row .k{font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--dim);flex:none}
-.fact-row .v{font-weight:600;color:var(--text);text-align:right;overflow-wrap:anywhere}
-.fact-row .v.hl{color:var(--accent);font-family:var(--disp);font-size:13.5px}
-.facts-src{
-  padding:14px 22px;border-top:1px dashed var(--line-strong);
-  font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);
-  display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;
-}
-.facts-src a{color:var(--accent)}
-.facts-src a:hover{text-decoration:underline}
-.project-links{display:flex;flex-wrap:wrap;gap:14px;margin-top:26px}
+        .bottombar .link:hover {
+            color: #fff;
+        }
 
-/* ---------- studio ---------- */
-.studio-sec{background:var(--bg2);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
-.studio-grid{display:grid;grid-template-columns:.9fr 1.1fr;gap:clamp(36px,6vw,90px);align-items:start}
-@media(max-width:900px){.studio-grid{grid-template-columns:1fr}}
-.studio-left{position:sticky;top:110px}
-@media(max-width:900px){.studio-left{position:static}}
-.studio-sign{margin-top:30px;display:inline-flex;align-items:center;gap:14px;color:var(--muted);font-size:14px}
-.studio-sign .mark{
-  width:44px;height:44px;border:1px solid var(--accent);border-radius:50%;
-  display:flex;align-items:center;justify-content:center;
-  font-family:var(--disp);font-weight:900;color:var(--accent);font-size:16px;flex:none;
-}
-.manifesto{font-size:clamp(17px,1.7vw,21px);line-height:1.75;color:var(--text)}
-.manifesto em{color:var(--accent);font-style:normal;font-weight:600}
-.manifesto+.manifesto{margin-top:18px;color:var(--muted);font-size:clamp(15px,1.4vw,17px)}
-.principles{margin-top:clamp(36px,4vw,54px);border-top:1px solid var(--line)}
-.principle{
-  display:grid;grid-template-columns:74px 1fr;gap:20px;
-  padding:26px 8px;border-bottom:1px solid var(--line);
-  transition:background .35s,padding-left .35s var(--ease);position:relative;
-}
-.principle:hover{background:rgba(250,92,92,.05);padding-left:20px}
-.principle::before{
-  content:"";position:absolute;left:0;top:0;height:100%;width:2px;background:var(--accent);
-  transform:scaleY(0);transform-origin:top;transition:transform .45s var(--ease);
-}
-.principle:hover::before{transform:scaleY(1)}
-.principle .pnum{font-family:var(--disp);font-weight:900;font-size:22px;color:var(--dim);transition:color .35s}
-.principle:hover .pnum{color:var(--accent)}
-.principle h4{font-family:var(--disp);font-weight:700;font-size:16px;letter-spacing:.02em;margin-bottom:8px}
-.principle p{color:var(--muted);font-size:15px;line-height:1.65}
+        .bottombar .link.external {
+            color: #777;
+        }
 
-/* ---------- stats + timeline ---------- */
-.stats-row{
-  display:grid;grid-template-columns:repeat(4,1fr);
-  border:1px solid var(--line);border-radius:4px;overflow:hidden;background:var(--panel);
-  margin-top:clamp(36px,5vw,56px);
-}
-@media(max-width:900px){.stats-row{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:520px){.stats-row{grid-template-columns:1fr}}
-.stat{
-  padding:clamp(26px,3vw,42px) clamp(20px,2.5vw,36px);
-  border-right:1px solid var(--line);border-bottom:1px solid var(--line);
-  transition:background .4s;position:relative;overflow:hidden;
-}
-.stat:hover{background:var(--panel2)}
-.stat::after{
-  content:"";position:absolute;left:0;bottom:0;height:3px;width:100%;
-  background:var(--accent);transform:scaleX(0);transform-origin:left;transition:transform .5s var(--ease);
-}
-.stat:hover::after{transform:scaleX(1)}
-.stat .num{
-  font-family:var(--disp);font-weight:900;font-size:clamp(34px,4vw,54px);
-  color:var(--text);line-height:1;display:flex;align-items:baseline;gap:4px;
-}
-.stat .num .suffix{color:var(--accent);font-size:.6em;font-weight:700}
-.stat .cap{margin-top:14px;font-size:12.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--dim)}
-@media(max-width:900px){.stat:nth-child(2){border-right:0}}
+        .bottombar .link.external:hover {
+            color: #ccc;
+        }
 
-.timeline-block{margin-top:clamp(56px,7vw,90px);display:grid;grid-template-columns:.8fr 1.2fr;gap:clamp(30px,5vw,80px)}
-@media(max-width:900px){.timeline-block{grid-template-columns:1fr}}
-.timeline-title{font-family:var(--disp);font-weight:700;font-size:clamp(20px,2.2vw,26px);line-height:1.3}
-.timeline-title span{color:var(--accent)}
-.timeline-note{color:var(--muted);margin-top:16px;font-size:15px}
-.timeline{list-style:none;position:relative;padding-left:34px}
-.timeline::before{content:"";position:absolute;left:8px;top:6px;bottom:6px;width:1px;background:var(--line-strong)}
-.tl-item{position:relative;padding-bottom:30px}
-.tl-item:last-child{padding-bottom:0}
-.tl-item::before{
-  content:"";position:absolute;left:-30px;top:7px;width:9px;height:9px;
-  background:var(--bg);border:2px solid var(--dim);border-radius:50%;
-  transition:border-color .3s,transform .3s var(--ease);
-}
-.tl-item:hover::before{border-color:var(--accent);transform:scale(1.35)}
-.tl-item.now::before{border-color:var(--accent);background:var(--accent);animation:pulse 2s infinite}
-.tl-step{font-family:var(--disp);font-size:11px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--accent);margin-bottom:6px}
-.tl-item h4{font-family:var(--disp);font-weight:700;font-size:16px;margin-bottom:6px}
-.tl-item p{color:var(--muted);font-size:15px}
-.tl-item .now-tag{
-  display:inline-block;margin-left:10px;font-size:10px;letter-spacing:.18em;text-transform:uppercase;
-  color:#140505;background:var(--accent);padding:3px 9px;border-radius:999px;vertical-align:middle;
-}
+        .bottombar .link.unavailable {
+            color: #553333;
+        }
 
-/* ---------- faq ---------- */
-.faq-sec{background:var(--bg2);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
-.faq-list{max-width:860px;margin-top:clamp(30px,4vw,48px)}
-.acc{border:1px solid var(--line);border-radius:4px;background:var(--panel);margin-bottom:14px;overflow:hidden;transition:border-color .35s}
-.acc.open{border-color:rgba(250,92,92,.5)}
-.acc-head{
-  width:100%;display:flex;justify-content:space-between;align-items:center;gap:20px;
-  background:transparent;border:0;color:var(--text);text-align:left;
-  padding:22px 26px;font-family:var(--disp);font-weight:700;font-size:clamp(14px,1.5vw,16px);letter-spacing:.02em;
-  transition:color .3s;
-}
-.acc-head:hover{color:var(--accent)}
-.acc-icon{
-  flex:none;width:30px;height:30px;border:1px solid var(--line-strong);border-radius:50%;
-  position:relative;transition:transform .5s var(--ease),border-color .35s,background .35s;
-}
-.acc-icon::before,.acc-icon::after{content:"";position:absolute;background:var(--muted);transition:background .3s}
-.acc-icon::before{left:50%;top:8px;width:1.5px;height:14px;transform:translateX(-50%)}
-.acc-icon::after{top:50%;left:8px;height:1.5px;width:14px;transform:translateY(-50%)}
-.acc.open .acc-icon{transform:rotate(225deg);border-color:var(--accent);background:var(--accent-soft)}
-.acc.open .acc-icon::before,.acc.open .acc-icon::after{background:var(--accent)}
-.acc-body{max-height:0;overflow:hidden;transition:max-height .55s var(--ease)}
-.acc-body p{padding:0 26px 24px;color:var(--muted);font-size:15.5px;max-width:700px}
-.acc-body b{color:var(--text);font-weight:600}
+        .page {
+            display: none;
+            margin-top: 56px;
+            margin-bottom: 160px;
+            padding: 40px 30px;
+            flex: 1;
+        }
 
-/* ---------- contact ---------- */
-.contact-sec{overflow:hidden}
-.contact-title{
-  font-family:var(--disp);font-weight:900;text-transform:uppercase;
-  font-size:clamp(34px,6.4vw,84px);line-height:1.02;
-}
-.contact-title .stroke{color:transparent;-webkit-text-stroke:1.5px var(--accent)}
-.contact-row{display:flex;flex-wrap:wrap;gap:16px;margin-top:clamp(30px,4vw,50px)}
-.contact-meta{
-  display:flex;flex-wrap:wrap;gap:clamp(20px,4vw,54px);margin-top:clamp(40px,5vw,64px);
-  padding-top:30px;border-top:1px dashed var(--line-strong);
-}
-.cm-item{font-size:13px;letter-spacing:.16em;text-transform:uppercase;color:var(--dim)}
-.cm-item b{display:block;color:var(--text);font-weight:600;margin-top:6px;letter-spacing:.08em}
-.cm-item a{color:var(--accent)}
-.cm-item a:hover{text-decoration:underline}
+        .page.active {
+            display: block;
+        }
 
-/* ---------- footer ---------- */
-footer{border-top:1px solid var(--line);background:var(--bg2);overflow:hidden}
-.foot-wrap{max-width:1240px;margin:0 auto;padding:clamp(50px,7vw,80px) clamp(20px,4vw,52px) 30px}
-.foot-giant{
-  font-family:var(--disp);font-weight:900;text-transform:uppercase;text-align:center;
-  font-size:clamp(42px,11.5vw,168px);line-height:1;
-  color:transparent;-webkit-text-stroke:1px rgba(242,241,237,.16);
-  transition:all .6s;cursor:default;user-select:none;
-}
-.foot-giant:hover{-webkit-text-stroke:1px rgba(250,92,92,.7);text-shadow:0 0 60px rgba(250,92,92,.18)}
-.foot-bottom{
-  display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;
-  margin-top:clamp(36px,5vw,60px);padding-top:26px;border-top:1px solid var(--line);
-  font-size:12.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);
-}
-.to-top{display:inline-flex;align-items:center;gap:10px;color:var(--muted);transition:color .3s,transform .3s var(--ease)}
-.to-top:hover{color:var(--accent);transform:translateY(-4px)}
-.foot-bottom .heart{color:var(--accent)}
+        .page h2 {
+            font-weight: 400;
+            font-size: 1.8rem;
+            color: #e0e0e0;
+            margin-bottom: 24px;
+        }
 
-@media (prefers-reduced-motion: reduce){
-  html{scroll-behavior:auto}
-  *,*::before,*::after{animation:none!important;transition:none!important}
-  .rv,.mask-line>span{opacity:1!important;transform:none!important}
-  #glow{display:none}
-}
-</style>
+        .page p {
+            color: #aaa;
+            line-height: 1.7;
+            font-size: 1rem;
+            max-width: 700px;
+        }
+
+        .page .back-link {
+            display: inline-block;
+            margin-top: 30px;
+            color: #777;
+            text-decoration: none;
+            font-size: 0.9rem;
+            border-bottom: 1px dashed #444;
+            padding-bottom: 2px;
+            transition: color 0.2s;
+            cursor: pointer;
+        }
+
+        .page .back-link:hover {
+            color: #ccc;
+        }
+
+        .contacts-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            max-width: 700px;
+            margin-top: 10px;
+        }
+
+        .contacts-list .contact-item {
+            display: flex;
+            align-items: baseline;
+            gap: 12px;
+            padding: 6px 0;
+            border-bottom: 1px solid #1a1a1a;
+        }
+
+        .contacts-list .contact-label {
+            color: #666;
+            font-size: 0.85rem;
+            min-width: 100px;
+        }
+
+        .contacts-list .contact-link {
+            color: #999;
+            text-decoration: none;
+            font-size: 0.95rem;
+            transition: color 0.2s;
+            word-break: break-all;
+        }
+
+        .contacts-list .contact-link:hover {
+            color: #fff;
+        }
+
+        .contacts-list .contact-link.unavailable {
+            color: #553333;
+        }
+
+        .contacts-list .contact-info {
+            color: #555;
+            font-size: 0.8rem;
+            margin-left: 4px;
+        }
+
+        .slider-container {
+            position: relative;
+            max-width: 700px;
+            margin: 16px 0 24px 0;
+            overflow: hidden;
+            border: 1px solid #2a2a2a;
+            background: #111;
+        }
+
+        .slider-track {
+            display: flex;
+            transition: transform 0.3s ease;
+        }
+
+        .slider-track .screenshot {
+            width: 100%;
+            flex-shrink: 0;
+            display: block;
+            height: auto;
+            background: #111;
+        }
+
+        .slider-track .screenshot.loading {
+            min-height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #555;
+            font-size: 0.9rem;
+            background: #1a1a1a;
+        }
+
+        .slider-track .screenshot.error {
+            min-height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #553333;
+            font-size: 0.9rem;
+            background: #1a1a1a;
+            border-color: #553333;
+        }
+
+        .slider-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(26, 26, 26, 0.8);
+            border: 1px solid #2a2a2a;
+            color: #aaa;
+            width: 40px;
+            height: 40px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: background 0.2s, color 0.2s;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            user-select: none;
+        }
+
+        .slider-btn:hover {
+            background: #2a2a2a;
+            color: #fff;
+        }
+
+        .slider-btn.prev {
+            left: 8px;
+        }
+
+        .slider-btn.next {
+            right: 8px;
+        }
+
+        .slider-dots {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px 0 8px 0;
+        }
+
+        .slider-dots .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #2a2a2a;
+            cursor: pointer;
+            transition: background 0.2s;
+            border: none;
+            padding: 0;
+        }
+
+        .slider-dots .dot.active {
+            background: #888;
+        }
+
+        .slider-dots .dot:hover {
+            background: #555;
+        }
+
+        .projects-iframe {
+            margin: 8px 0 12px 0;
+            max-width: 700px;
+            position: relative;
+        }
+
+        .projects-iframe iframe {
+            max-width: 100%;
+            border: 1px solid #2a2a2a;
+            background: #111;
+            display: block;
+        }
+
+        .projects-iframe .iframe-info {
+            display: none;
+            padding: 16px 0;
+            color: #666;
+            font-size: 0.95rem;
+            text-align: center;
+        }
+
+        .projects-iframe .iframe-info.show {
+            display: block;
+        }
+
+        .projects-mirror {
+            display: block;
+            color: #555;
+            font-size: 0.85rem;
+            text-decoration: none;
+            transition: color 0.2s;
+            margin-top: 4px;
+        }
+
+        .projects-mirror:hover {
+            color: #999;
+        }
+
+        .blog-content {
+            max-width: 700px;
+            margin-top: 10px;
+        }
+
+        .blog-content .blog-entry {
+            padding: 16px 0;
+            border-bottom: 1px solid #1a1a1a;
+        }
+
+        .blog-content .blog-entry:last-child {
+            border-bottom: none;
+        }
+
+        .blog-content .blog-entry .blog-date {
+            color: #555;
+            font-size: 0.8rem;
+            margin-bottom: 4px;
+        }
+
+        .blog-content .blog-entry .blog-text {
+            color: #aaa;
+            line-height: 1.7;
+            font-size: 1rem;
+            white-space: pre-wrap;
+        }
+
+        .blog-content .blog-empty {
+            color: #555;
+            font-size: 1rem;
+            text-align: center;
+            padding: 40px 0;
+        }
+
+        .blog-content .blog-error {
+            color: #aa5555;
+            font-size: 0.95rem;
+            text-align: center;
+            padding: 40px 0;
+        }
+
+        .history-page .version-item {
+            color: #aaa;
+            padding: 12px 0;
+            border-bottom: 1px solid #222;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .history-page .version-item:hover {
+            color: #fff;
+        }
+
+        .history-page .version-item:last-child {
+            border-bottom: none;
+        }
+
+        .history-page .version-item.now {
+            color: #e0e0e0;
+            font-weight: 500;
+        }
+
+        .download-notification {
+            position: fixed;
+            bottom: 160px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #1a1a1a;
+            border: 1px solid #2a2a2a;
+            padding: 12px 24px;
+            border-radius: 4px;
+            color: #aaa;
+            font-size: 0.9rem;
+            z-index: 300;
+            display: none;
+            max-width: 90%;
+            text-align: center;
+        }
+
+        .download-notification.active {
+            display: block;
+        }
+
+        .download-notification .error {
+            color: #aa5555;
+        }
+
+        .download-notification .success {
+            color: #55aa55;
+        }
+
+        @media (max-width: 700px) {
+            .bottombar {
+                gap: 30px;
+                padding: 16px 20px;
+                min-height: 140px;
+                flex-wrap: wrap;
+            }
+            .bottombar .link {
+                font-size: 0.85rem;
+            }
+            .main h1 {
+                font-size: 1.5rem;
+            }
+            .topbar {
+                padding: 0 20px;
+                gap: 12px;
+                flex-wrap: wrap;
+                height: auto;
+                min-height: 56px;
+            }
+            .topbar .version {
+                font-size: 0.85rem;
+            }
+            .page h2 {
+                font-size: 1.4rem;
+            }
+            .download-notification {
+                bottom: 150px;
+                font-size: 0.8rem;
+                padding: 10px 16px;
+            }
+            .contacts-list .contact-item {
+                flex-direction: column;
+                gap: 2px;
+                padding: 8px 0;
+            }
+            .contacts-list .contact-label {
+                min-width: auto;
+                font-size: 0.75rem;
+            }
+            .projects-iframe iframe {
+                width: 100% !important;
+                height: auto !important;
+            }
+            .slider-btn {
+                width: 32px;
+                height: 32px;
+                font-size: 1rem;
+            }
+            .slider-btn.prev {
+                left: 4px;
+            }
+            .slider-btn.next {
+                right: 4px;
+            }
+        }
+
+        @media (max-width: 450px) {
+            .bottombar {
+                gap: 20px;
+                padding: 12px 16px;
+            }
+            .bottombar .column {
+                min-width: 80px;
+            }
+            .bottombar .column-title {
+                font-size: 0.6rem;
+            }
+        }
+    </style>
 </head>
 <body>
 
-<div id="progress"></div>
+    <header class="topbar">
+        <div class="version" id="versionClick">
+            version: <span id="currentVersion"><span class="loading">loading...</span></span>
+        </div>
+        <a class="history-link" id="historyToggle">version history</a>
+    </header>
 
-<header class="site-head" id="siteHead">
-  <a class="logo" href="#top" aria-label="STARLELAB — на главную">
-    <span class="logo-frame" id="logoFrame">
-      <img src="photo.png" alt="Логотип STARLELAB" id="logoImg" onerror="this.style.display='none';this.parentElement.classList.add('no-img')">
-    </span>
-    STARLELAB
-  </a>
-  <nav class="nav" aria-label="Основная навигация">
-    <a href="#project">Проект</a>
-    <a href="#studio">Студия</a>
-    <a href="#process">Процесс</a>
-    <a href="#faq">Вопросы</a>
-    <a href="#contact">Контакты</a>
-  </nav>
-  <div class="status-chip"><span class="pulse-dot"></span> данные игры — live с itch.io</div>
-</header>
-
-<main id="top">
-
-  <!-- ============ HERO ============ -->
-  <section class="hero" id="hero">
-    <div class="hero-grid-bg" aria-hidden="true"></div>
-    <div id="glow" aria-hidden="true"></div>
-    <span class="cross c1" aria-hidden="true"></span>
-    <span class="cross c2" aria-hidden="true"></span>
-    <span class="cross c3" aria-hidden="true"></span>
-    <span class="cross c4" aria-hidden="true"></span>
-
-    <div class="badge" aria-hidden="true">
-      <svg viewBox="0 0 200 200">
-        <defs>
-          <path id="circlePath" d="M100,100 m-80,0 a80,80 0 1,1 160,0 a80,80 0 1,1 -160,0"/>
-        </defs>
-        <text><textPath href="#circlePath">инди-студия • один проект • сделано вручную • без издателя • </textPath></text>
-      </svg>
-      <div class="badge-core">
-        <span class="big">01</span>
-        <span class="small">проект</span>
-      </div>
+    <div class="download-notification" id="notification">
+        <span id="notificationText">loading...</span>
     </div>
 
-    <div class="hero-inner">
-      <h1 class="hero-title"><span id="scrambleTitle">STARLELAB</span></h1>
-      <p class="hero-sub">маленькая студия с большими амбициями. мы делаем <b>одну игру</b> — но так, чтобы её хотелось играть вечно. <b>собственный движок</b>, ноль компромиссов, всё вручную.</p>
-      <div class="hero-meta">
-      </div>
-      <div class="hero-cta-row">
-        <a class="btn btn-solid" href="#project">смотреть проект <span class="arr">→</span></a>
-        <a class="btn btn-ghost" href="https://starlelab.itch.io/zombotanic" target="_blank" rel="noopener">скачать на itch.io <span class="arr">↗</span></a>
-      </div>
-    </div>
+    <section class="page active" id="mainPage">
+        <h1>welcome</h1>
+        <p style="color: #777; margin-top: 12px;">
+            we're Starlelab — an independent indie studio. 
+            everything in the game was built from scratch. 
+            we're still a small team, but you can change that: 
+            <a href="mailto:gplyno@gmail.com" style="color: #777; border-bottom: 1px dashed #444; text-decoration: none;">gplyno@gmail.com</a>
+        </p>
+    </section>
 
-    <div class="hero-bottom">
-      <div class="scroll-hint"><span class="scroll-line"></span> листайте вниз</div>
-      <div class="build-note">
-        сборка <em data-live="version">V1.6.9</em> · обновлено <em data-live="updated">2 дня назад</em> · itch.io
-      </div>
-    </div>
-  </section>
+    <section class="page" id="projectsPage">
+        <h2>projects</h2>
 
-  <!-- ============ TICKER ============ -->
-  <div class="ticker" aria-hidden="true">
-    <div class="ticker-track">
-      <span class="ticker-item">zombotanic — уже на itch.io <span class="sep">◆</span> можете скачать <span class="sep">◆</span> так же посмотрите telegram <span class="sep">◆</span> и посмотрите youtube <span class="sep">◆</span> кто то вообще это читает? <span class="sep">◆</span> печеньки <span class="sep">◆</span></span>
-    </div>
-  </div>
-
-  <!-- ============ PROJECT ============ -->
-  <section id="project">
-    <div class="wrap">
-      <div class="sec-label rv"><span class="num">01</span> проект <span class="rule"></span> единственный</div>
-
-      <div class="project-head">
-        <h2 class="sec-title rv mask">
-          <span class="mask-line"><span>наша игра</span></span>
-          <span class="mask-line"><span>наша гордость</span>
-        </h2>
-      </div>
-
-      <div class="embed-zone rv rv-d1">
-        <div class="embed-frame">
-          <span class="frame-corner tl"></span><span class="frame-corner tr"></span>
-          <span class="frame-corner bl"></span><span class="frame-corner br"></span>
-          <div class="embed-bar">
-            <div class="dots" aria-hidden="true"><i></i><i></i><i></i></div>
-            <div class="label">itch.io / embed / zombotanic</div>
-            <div class="live-pill" id="livePill" title="Данные паспорта проекта загружаются напрямую со страницы itch.io">
-              <span class="pulse-dot" id="liveDot"></span>
-              <span id="liveText">загрузка itch.io…</span>
-            </div>
-          </div>
-          <div class="embed-body">
-            <iframe frameborder="0" src="https://itch.io/embed/4666491?linkback=true&amp;bg_color=ffffff&amp;border_color=fa5c5c" width="552" height="167" title="Zombotanic by starlelab — itch.io embed" loading="lazy"><a href="https://starlelab.itch.io/zombotanic">zombotanic by starlelab</a></iframe>
-          </div>
-          <div class="embed-caption">
-            <span>страница игры — <b>прямо в этом виджете</b></span>
-          </div>
-        </div>
-      </div>
-
-      <div class="project-grid">
-        <div class="project-about rv">
-          <h3>выживание, в которое вложено <span>больше</span>, чем кажется на первый взгляд</h3>
-
-          <blockquote class="live-quote">
-            <span data-live="description">a zombie apocalypse survival game with its own engine</span>
-            <span class="src">— официальное описание со страницы itch.io</span>
-          </blockquote>
-
-          <p><b>zombotanic</b> — игра про выживание в условиях апокалипсиса: вид сверху, строительство и развитие собственной базы, у каждого своя история</p>
-          <p>игра находится в активной разработке: новые сборки, исправления и контент выходят регулярно, а фидбек игроков попадает в работу напрямую</p>
-
-          <div class="tags" id="tagsWrap">
-            <span class="tag">Survival</span>
-            <span class="tag">Sandbox</span>
-            <span class="tag">Indie</span>
-            <span class="tag">Singleplayer</span>
-            <span class="tag">multiplayer</span>
-            <span class="tag">2D</span>
-            <span class="tag">Pixel Art</span>
-          </div>
+        <div class="slider-container" id="sliderContainer">
+            <div class="slider-track" id="sliderTrack"></div>
+            <button class="slider-btn prev" id="sliderPrev" aria-label="назад">‹</button>
+            <button class="slider-btn next" id="sliderNext" aria-label="вперёд">›</button>
+            <div class="slider-dots" id="sliderDots"></div>
         </div>
 
-        <div class="rv rv-d2">
-          <div class="facts">
-            <div class="facts-head">
-              <span>паспорт проекта</span>
-              <span class="live-pill"><span class="pulse-dot" id="factsDot"></span><span id="factsState">live-данные</span></span>
-            </div>
-            <div class="fact-row"><span class="k">название</span><span class="v" data-live="title">Zombotanic</span></div>
-            <div class="fact-row"><span class="k">статус</span><span class="v hl" data-live="status">в разработке</span></div>
-            <div class="fact-row"><span class="k">сборка</span><span class="v" data-live="version">V1.6.9</span></div>
-            <div class="fact-row"><span class="k">обновлено</span><span class="v" data-live="updated">2 дня назад</span></div>
-            <div class="fact-row"><span class="k">платформа</span><span class="v" data-live="platforms">Windows</span></div>
-            <div class="fact-row"><span class="k">жанр</span><span class="v" data-live="genre">Survival</span></div>
-            <div class="fact-row"><span class="k">рейтинг</span><span class="v hl" data-live="rating">5.0 / 5</span></div>
-            <div class="fact-row"><span class="k">цена</span><span class="v hl" data-live="price">free · pay what you want</span></div>
-            <div class="fact-row"><span class="k">разработчик</span><span class="v" data-live="author">starlelab</span></div>
-            <div class="facts-src">
-              <span>источник данных — itch.io</span>
-              <a href="https://starlelab.itch.io/zombotanic" target="_blank" rel="noopener">starlelab.itch.io/zombotanic ↗</a>
-            </div>
-          </div>
-          <div class="project-links">
-            <a class="btn btn-ghost" href="https://starlelab.itch.io/zombotanic" target="_blank" rel="noopener">страница игры <span class="arr">↗</span></a>
-            <a class="btn btn-ghost" href="https://t.me/starlelab" target="_blank" rel="noopener">сообщество в telegram <span class="arr">↗</span></a>
-            <a class="btn btn-ghost" href="https://youtube.com/@gplyno" target="_blank" rel="noopener">youtube<span class="arr">↗</span></a>
-            <a class="btn btn-ghost" href="https://zombotanic-map.pages.dev" target="_blank" rel="noopener">map<span class="arr">↗</span></a>
-            <a class="btn btn-ghost" href="https://gplyno.github.io/zombotanic_map" target="_blank" rel="noopener">map (зеркало)<span class="arr">↗</span></a>
-          </div>
+        <div class="projects-iframe" id="itchContainer">
+            <iframe id="itchFrame" frameborder="0" src="https://itch.io/embed/4666491?linkback=true" width="552" height="167">
+                <a href="https://starlelab.itch.io/zombotanic">zombotanic by starlelab</a>
+            </iframe>
+            <div class="iframe-info" id="itchInfo">itch.io widget is temporarily unavailable</div>
         </div>
-      </div>
-    </div>
-  </section>
 
-  <!-- ============ STUDIO ============ -->
-  <section class="studio-sec" id="studio">
-    <div class="wrap">
-      <div class="sec-label rv"><span class="num">02</span> студия <span class="rule"></span> кто мы такие</div>
-      <div class="studio-grid">
-        <div class="studio-left">
-          <h2 class="sec-title rv mask">
-            <span class="mask-line"><span>несколько человек</span></span>
-            <span class="mask-line"><span>один движок</span></span>
-            <span class="mask-line"><span>миллион идей<span style="color:var(--accent)"></span></span></span>
-          </h2>
-          <p class="sec-desc rv rv-d1">STARLELAB — это не офис и не команда из двадцати специалистов. Это идея о том, что одну игру можно сделать честно, медленно и по-настоящему.</p>
-          <div class="studio-sign rv rv-d2"><span>gplyno · основатель и единственный разработчик</span></div>
+        <a href="https://github.com/gplyno/zombotanic/releases" target="_blank" class="projects-mirror">
+            mirror (github)
+        </a>
+
+        <a class="back-link" data-page="main">← back</a>
+    </section>
+
+    <section class="page" id="blogPage">
+        <h2>blog</h2>
+        <div class="blog-content" id="blogContent">
+            <div class="blog-empty">loading...</div>
         </div>
-        <div>
-          <p class="manifesto rv">мы верим, что <em>размер студии не равен размеру игры</em>. поэтому вместо готовых решений — собственный движок, вместо маркетинговых обещаний — рабочие сборки, вместо спешки — качество.</p>
-          <p class="manifesto rv rv-d1">каждая строка кода в zombotanic написана здесь. каждая заплатка — ответ на реальный фидбек реальных игроков. Это и есть инди в чистом виде.</p>
+        <a class="back-link" data-page="main">← back</a>
+    </section>
 
-          <div class="principles">
-            <div class="principle rv">
-              <span class="pnum">01</span>
-              <div><h4>полный контроль</h4><p>cвой движок означает одно: мы не зависим от чужих решений и ограничений. игра такая, какой должна быть.</p></div>
-            </div>
-            <div class="principle rv rv-d1">
-              <span class="pnum">02</span>
-              <div><h4>релизы часто</h4><p>cборки выходят регулярно: лучше маленькое улучшение сегодня, чем идеальное «когда-нибудь».</p></div>
-            </div>
-            <div class="principle rv rv-d2">
-              <span class="pnum">03</span>
-              <div><h4>честная цена</h4><p>игра бесплатна. Поддержка — исключительно по желанию: сыграли, понравилось — решили сами.</p></div>
-            </div>
-            <div class="principle rv rv-d3">
-              <span class="pnum">04</span>
-              <div><h4>диалог с игроками</h4><p>сообщество и devlog — не формальность. баг-репорты и идеи превращаются в задачи и патчи.</p></div>
-            </div>
-          </div>
+    <section class="page" id="contactsPage">
+        <h2>social media</h2>
+        <div class="contacts-list" id="contactsList"></div>
+        <a class="back-link" data-page="main">← back</a>
+    </section>
+
+    <section class="page" id="aboutPage">
+        <h2>about us</h2>
+        <p>
+            as we’ve said, we’re a small studio. 
+            but we’ll strive to create a great game - one that people will want to play for a long time.
+        </p>
+        <a class="back-link" data-page="main">← back</a>
+    </section>
+
+    <section class="page history-page" id="historyPage">
+        <h2>version history</h2>
+        <div id="versionList">
+            <div class="version-item">loading...</div>
         </div>
-      </div>
-    </div>
-  </section>
+        <a class="back-link" data-page="main">← back</a>
+    </section>
 
-  <!-- ============ PROCESS ============ -->
-  <section id="process">
-    <div class="wrap">
-      <div class="sec-label rv"><span class="num">03</span> процесс <span class="rule"></span> цифры и путь</div>
-      <h2 class="sec-title rv mask">
-        <span class="mask-line"><span>как это</span></span>
-        <span class="mask-line"><span>делается</span>
-      </h2>
-
-      <div class="stats-row">
-        <div class="stat rv">
-          <div class="num"><span class="count" data-count="1">0</span></div>
-          <div class="cap">проект - и он единственный</div>
+    <footer class="bottombar">
+        <div class="column">
+            <div class="column-title">navigation</div>
+            <a class="link" data-page="main">home</a>
+            <a class="link" data-page="projects">projects</a>
+            <a class="link" data-page="blog">blog</a>
+            <a class="link" data-page="contacts">social media</a>
+            <a class="link" data-page="about">about us</a>
         </div>
-        <div class="stat rv rv-d1">
-          <div class="num"><span class="count" data-count="0">0</span></div>
-          <div class="cap">забытих идей</div>
+
+        <div class="column">
+            <div class="column-title">social media</div>
+            <a class="link external" id="youtubeLink" href="https://youtube.com/@gplyno" target="_blank">youtube</a>
+            <a class="link external" id="telegramLink" href="https://t.me/starlelab" target="_blank">telegram</a>
+            <a class="link external" id="discordLink" href="https://discord.gg/4XShPw3exN" target="_blank">discord</a>
+            <a class="link external" id="itchLink" href="https://starlelab.itch.io/zombotanic" target="_blank">itch.io</a>
+            <a class="link external" id="githubLink" href="https://github.com/gplyno" target="_blank">github</a>
         </div>
-        <div class="stat rv rv-d2">
-          <div class="num"><span class="count" data-count="100">0</span><span class="suffix">%</span></div>
-          <div class="cap">кода написано вручную</div>
+
+        <div class="column">
+            <div class="column-title">tool</div>
+            <a class="link external" id="mapLink" href="#" target="_blank">map</a>
+            <a class="link external" id="mapLinkFallback" href="#" target="_blank" style="display:none;">map</a>
         </div>
-        <div class="stat rv rv-d3">
-          <div class="num"><span class="count" data-count="2">0</span><span class="suffix">×∞</span></div>
-          <div class="cap">идей в запасе на будущее</div>
-        </div>
-      </div>
+    </footer>
 
-      <div class="timeline-block">
-        <div class="rv">
-          <div class="timeline-title">путь проекта — <span>от первой идеи</span> до живых обновлений.</div>
-          <p class="timeline-note">никаких громких дат и инвесторов: просто последовательная работа, сборка за сборкой. Текущий этап отмечен пульсирующей точкой.</p>
-        </div>
-        <ol class="timeline">
-          <li class="tl-item rv">
-            <div class="tl-step">шаг 01</div>
-            <h4>идея</h4>
-            <p>появилась мысль: сделать игру про выживание, в которой хочется остаться надолго.</p>
-          </li>
-          <li class="tl-item rv rv-d1">
-            <div class="tl-step">шаг 02</div>
-            <h4>собственный движок</h4>
-            <p>вместо готового решения — свой движок, написанный с нуля под задачи игры.</p>
-          </li>
-          <li class="tl-item rv rv-d2">
-            <div class="tl-step">шаг 03</div>
-            <h4>первая играбельная сборка</h4>
-            <p>базовый цикл готов: выживать, отбиваться. Дальше — только рост.</p>
-          </li>
-          <li class="tl-item rv rv-d3">
-            <div class="tl-step">шаг 04</div>
-            <h4>публикация на itch.io</h4>
-            <p>игра вышла к людям: страница, сообщество, первый фидбек и первые баг-репорты.</p>
-          </li>
-          <li class="tl-item now rv rv-d4">
-            <div class="tl-step">шаг 05 <span class="now-tag">сейчас</span></div>
-            <h4>живые обновления</h4>
-            <p>патчи, исправления и новый контент выходят регулярно</p>
-          </li>
-        </ol>
-      </div>
-    </div>
-  </section>
+    <script>
+        const GITHUB_API_URL = 'https://api.github.com/repos/gplyno/zombotanic/releases';
+        const ITCH_URL = 'https://starlelab.itch.io/zombotanic';
+        const GITHUB_REPO_URL = 'https://github.com/gplyno';
+        const BLOG_FILE_URL = 'https://raw.githubusercontent.com/gplyno/starlelab/main/blog.txt';
 
-  <!-- ============ FAQ ============ -->
-  <section class="faq-sec" id="faq">
-    <div class="wrap">
-      <div class="sec-label rv"><span class="num">04</span> вопросы <span class="rule"></span> частые</div>
-      <h2 class="sec-title rv mask">
-        <span class="mask-line"><span>спрашивали?</span></span>
-        <span class="mask-line"><span>отвечаем</span>
-      </h2>
+        const MAP_LINKS = [
+            'https://gplyno.github.io/zombotanic_map/',
+            'https://zombotanic-map.pages.dev'
+        ];
 
-      <div class="faq-list">
-        <div class="acc rv">
-          <button class="acc-head" aria-expanded="false">игра действительно бесплатная?<span class="acc-icon" aria-hidden="true"></span></button>
-          <div class="acc-body"><p>да. <b>zombotanic можно скачать бесплатно</b> — модель «плати сколько считаешь нужным». Если игра понравилась и вы захотите поддержать разработку, на itch.io есть возможность оставить любую сумму. Если нет — просто играйте в удовольствие.</p></div>
-        </div>
-        <div class="acc rv rv-d2">
-          <button class="acc-head" aria-expanded="false">игра ещё не закончена. стоит ли пробовать сейчас?<span class="acc-icon" aria-hidden="true"></span></button>
-          <div class="acc-body"><p>вполне. Основной игровой цикл уже работает, а <b>обновления выходят регулярно</b>. Скачав игру сейчас, вы получаете её по сути за «ноль» и наблюдаете, как она растёт. Ранний фидбек особенно ценен — он напрямую влияет на следующие сборки.</p></div>
-        </div>
-        <div class="acc rv rv-d3">
-          <button class="acc-head" aria-expanded="false">будут ли у студии другие проекты?<span class="acc-icon" aria-hidden="true"></span></button>
-          <div class="acc-body"><p>пока все силы уходят на <b>один-единственный проект</b> — и это принципиально. Когда Zombotanic дойдёт до состояния, за которое не стыдно ни на минуту, можно будет думать о втором. Идей уже накоплено на несколько вперёд.</p></div>
-        </div>
-        <div class="acc rv rv-d4">
-          <button class="acc-head" aria-expanded="false">как поддержать студию?<span class="acc-icon" aria-hidden="true"></span></button>
-          <div class="acc-body"><p>три простых способа: <b>сыграть</b> и рассказать друзьям, <b>оставить фидбек</b> или баг-репорт в сообществе на itch.io, либо <b>поддержать материально</b> на странице игры — любая сумма идёт напрямую в разработку.</p></div>
-        </div>
-      </div>
-    </div>
-  </section>
+        const SOCIAL_LINKS = {
+            youtube: 'https://youtube.com/@gplyno',
+            telegram: 'https://t.me/starlelab',
+            discord: 'https://discord.gg/4XShPw3exN',
+            itch: ITCH_URL,
+            github: GITHUB_REPO_URL
+        };
 
-  <!-- ============ CONTACT ============ -->
-  <section class="contact-sec" id="contact">
-    <div class="wrap">
-      <div class="sec-label rv"><span class="num">05</span> связь <span class="rule"></span> мы на связи</div>
-      <h2 class="contact-title rv mask">
-        <span class="mask-line"><span>сыграем?</span></span>
-        <span class="mask-line"><span class="stroke">или поможем?</span></span>
-      </h2>
-      <p class="sec-desc rv rv-d1">все дороги ведут на itch.io: страница игры, профиль студии и сообщество — в одном клике. отдельное спасибо каждому, кто скачает и расскажет об игре.</p>
-      <div class="contact-row rv rv-d2">
-        <a class="btn btn-solid" href="https://starlelab.itch.io/zombotanic" target="_blank" rel="noopener">скачать Zombotanic <span class="arr">↗</span></a>
-        <a class="btn btn-ghost" href="https://starlelab.itch.io/" target="_blank" rel="noopener">профиль студии <span class="arr">↗</span></a>
-        <a class="btn btn-ghost" href="https://starlelab.itch.io/zombotanic/community" target="_blank" rel="noopener">сообщество <span class="arr">↗</span></a>
-      </div>
-      <div class="contact-meta rv rv-d3">
-        <div class="cm-item">студия<b data-live="author">starlelab</b></div>
-        <div class="cm-item">проект<b data-live="title">zombotanic</b></div>
-        <div class="cm-item">платформа<b>itch.io</b></div>
-        <div class="cm-item">статус<b><a href="https://starlelab.itch.io/zombotanic/devlog" target="_blank" rel="noopener">devlog на itch.io ↗</a></b></div>
-      </div>
-    </div>
-  </section>
-</main>
+        const CONTACTS_DATA = [
+            { label: 'youtube', url: 'https://youtube.com/@gplyno', info: '- developer channel' },
+            { label: 'telegram', url: 'https://t.me/starlelab', info: '- Chat and news' },
+            { label: 'discord', url: 'https://discord.gg/4XShPw3exN', info: '- community server' },
+            { label: 'itch.io', url: 'https://starlelab.itch.io/zombotanic', info: '- game page' },
+            { label: 'github', url: 'https://github.com/gplyno', info: '- minnor' },
+            { label: 'map', url: 'https://gplyno.github.io/zombotanic_map/', info: '- game map' },
+            { label: 'map (mirror)', url: 'https://zombotanic-map.pages.dev', info: '- game map (mirror)' }
+        ];
 
-<!-- ============ FOOTER ============ -->
-<footer>
-  <div class="foot-wrap">
-    <div class="foot-bottom">
-      <span>© <span id="year">2026</span> starlelab · все права защищены</span>
-      <a class="to-top" href="#top">наверх</a>
-    </div>
-  </div>
-</footer>
+        const SCREENSHOTS = [
+            'images/screenshot1.png',
+            'images/screenshot2.png',
+            'images/screenshot3.png'
+        ];
 
-<script>
-(function(){
-  "use strict";
-  var reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        const FALLBACK_VERSION = 'error';
+        const FALLBACK_HISTORY = [
+            'error',
+        ];
 
-  /* ================= header / progress ================= */
-  var head = document.getElementById("siteHead");
-  var progress = document.getElementById("progress");
-  function onScroll(){
-    var sy = window.scrollY || document.documentElement.scrollTop;
-    head.classList.toggle("scrolled", sy > 40);
-    var h = document.documentElement.scrollHeight - window.innerHeight;
-    progress.style.width = (h > 0 ? (sy / h) * 100 : 0) + "%";
-  }
-  window.addEventListener("scroll", onScroll, {passive:true});
-  onScroll();
+        let releasesData = [];
+        let currentVersionTag = '';
+        let currentSlide = 0;
+        let totalSlides = 0;
+        let slidesLoaded = 0;
 
-  /* ================= scramble title ================= */
-  var titleEl = document.getElementById("scrambleTitle");
-  var finalText = titleEl.textContent;
-  if (!reduced) {
-    var pool = "▚▞▟#%&@+*/=<>";
-    var frameN = 0, totalFrames = 46;
-    var scrambleTimer = setInterval(function(){
-      frameN++;
-      var revealed = Math.floor((frameN / totalFrames) * finalText.length);
-      var out = "";
-      for (var i = 0; i < finalText.length; i++) {
-        out += i < revealed ? finalText[i] : pool[Math.floor(Math.random() * pool.length)];
-      }
-      titleEl.textContent = out;
-      if (frameN >= totalFrames) { titleEl.textContent = finalText; clearInterval(scrambleTimer); }
-    }, 34);
-  }
-
-  /* ================= hero glow ================= */
-  var glow = document.getElementById("glow");
-  var hero = document.getElementById("hero");
-  if (!reduced && glow && window.matchMedia("(pointer: fine)").matches) {
-    var tx = 0, ty = 0, cx = 0, cy = 0, started = false;
-    hero.addEventListener("mousemove", function(e){
-      var r = hero.getBoundingClientRect();
-      tx = e.clientX - r.left; ty = e.clientY - r.top;
-      if (!started) { started = true; cx = tx; cy = ty; glow.style.opacity = "1"; }
-    });
-    hero.addEventListener("mouseleave", function(){ glow.style.opacity = "0"; });
-    (function glowLoop(){
-      cx += (tx - cx) * 0.07; cy += (ty - cy) * 0.07;
-      glow.style.transform = "translate(" + (cx - 320) + "px," + (cy - 320) + "px)";
-      requestAnimationFrame(glowLoop);
-    })();
-  }
-
-  /* ================= reveals ================= */
-  var revealEls = document.querySelectorAll(".rv, .mask");
-  if ("IntersectionObserver" in window) {
-    var io = new IntersectionObserver(function(entries){
-      entries.forEach(function(entry){
-        if (entry.isIntersecting) { entry.target.classList.add("is-in"); io.unobserve(entry.target); }
-      });
-    }, {threshold: 0.14, rootMargin: "0px 0px -40px 0px"});
-    revealEls.forEach(function(el){ io.observe(el); });
-  } else {
-    revealEls.forEach(function(el){ el.classList.add("is-in"); });
-  }
-
-  /* ================= counters ================= */
-  var counters = document.querySelectorAll(".count");
-  function runCounter(el){
-    var target = parseInt(el.dataset.count, 10) || 0;
-    if (reduced) { el.textContent = String(target).padStart(2, "0"); return; }
-    var start = null, dur = 1400;
-    function step(ts){
-      if (!start) start = ts;
-      var p = Math.min((ts - start) / dur, 1);
-      var eased = 1 - Math.pow(1 - p, 3);
-      el.textContent = String(Math.round(eased * target)).padStart(2, "0");
-      if (p < 1) requestAnimationFrame(step);
-    }
-    requestAnimationFrame(step);
-  }
-  if ("IntersectionObserver" in window) {
-    var cio = new IntersectionObserver(function(entries){
-      entries.forEach(function(entry){
-        if (entry.isIntersecting) { runCounter(entry.target); cio.unobserve(entry.target); }
-      });
-    }, {threshold: 0.5});
-    counters.forEach(function(c){ cio.observe(c); });
-  } else { counters.forEach(runCounter); }
-
-  /* ================= accordion ================= */
-  var accs = document.querySelectorAll(".acc");
-  accs.forEach(function(acc){
-    var btn = acc.querySelector(".acc-head");
-    var body = acc.querySelector(".acc-body");
-    btn.addEventListener("click", function(){
-      var isOpen = acc.classList.contains("open");
-      accs.forEach(function(other){
-        other.classList.remove("open");
-        other.querySelector(".acc-body").style.maxHeight = "0px";
-        other.querySelector(".acc-head").setAttribute("aria-expanded", "false");
-      });
-      if (!isOpen) {
-        acc.classList.add("open");
-        body.style.maxHeight = body.scrollHeight + "px";
-        btn.setAttribute("aria-expanded", "true");
-      }
-    });
-  });
-
-  document.getElementById("year").textContent = new Date().getFullYear();
-
-  /* =====================================================
-     LIVE-ДАННЫЕ С ITCH.IO
-     Паспорт проекта, сборка, статус, теги и devlog
-     загружаются напрямую со страницы игры.
-     ===================================================== */
-  var GAME_URL = "https://starlelab.itch.io/zombotanic";
-  var CACHE_KEY = "starlelab_itch_cache_v1";
-
-  var liveDot = document.getElementById("liveDot");
-  var liveText = document.getElementById("liveText");
-  var factsDot = document.getElementById("factsDot");
-  var factsState = document.getElementById("factsState");
-
-  function setLiveState(mode){
-    liveDot.classList.remove("ok", "warn");
-    factsDot.classList.remove("ok", "warn");
-    if (mode === "live") {
-      liveDot.classList.add("ok"); factsDot.classList.add("ok");
-      liveText.textContent = "данные itch.io · live";
-      factsState.textContent = "live-данные";
-    } else if (mode === "cache") {
-      liveDot.classList.add("warn"); factsDot.classList.add("warn");
-      liveText.textContent = "кэш itch.io · обновляем…";
-      factsState.textContent = "кэш";
-    } else {
-      liveDot.classList.add("warn"); factsDot.classList.add("warn");
-      liveText.textContent = "itch.io недоступен · сохранено ранее";
-      factsState.textContent = "офлайн";
-    }
-  }
-
-  /* --- универсальная загрузка через CORS-прокси --- */
-  function fetchWithTimeout(url, ms){
-    var ctrl = ("AbortController" in window) ? new AbortController() : null;
-    var opts = ctrl ? {signal: ctrl.signal} : {};
-    var t = setTimeout(function(){ if (ctrl) ctrl.abort(); }, ms);
-    return fetch(url, opts).then(function(r){
-      clearTimeout(t);
-      if (!r.ok) throw new Error("HTTP " + r.status);
-      return r.text();
-    }).catch(function(err){ clearTimeout(t); throw err; });
-  }
-
-  function loadItchPage(url){
-    var attempts = [
-      function(u){ return fetchWithTimeout("https://api.allorigins.win/get?url=" + encodeURIComponent(u), 14000)
-        .then(function(t){ var j = JSON.parse(t); if (j && j.contents) return j.contents; throw new Error("empty"); }); },
-      function(u){ return fetchWithTimeout("https://api.allorigins.win/raw?url=" + encodeURIComponent(u), 14000); },
-      function(u){ return fetchWithTimeout("https://corsproxy.io/?url=" + encodeURIComponent(u), 14000); },
-      function(u){ return fetchWithTimeout("https://api.codetabs.com/v1/proxy?quest=" + encodeURIComponent(u), 14000); }
-    ];
-    function attempt(i){
-      if (i >= attempts.length) return Promise.reject(new Error("все прокси недоступны"));
-      return attempts[i](url).catch(function(){ return attempt(i + 1); });
-    }
-    return attempt(0);
-  }
-
-  /* --- парсер страницы itch.io --- */
-  function ownText(el){
-    var s = "";
-    for (var i = 0; i < el.childNodes.length; i++) {
-      if (el.childNodes[i].nodeType === 3) s += el.childNodes[i].textContent;
-    }
-    return s.trim();
-  }
-
-  function findLabelEl(doc, label){
-    var lower = label.toLowerCase();
-    var nodes = doc.querySelectorAll("body *");
-    for (var i = 0; i < nodes.length; i++) {
-      var own = ownText(nodes[i]).replace(/:$/, "").trim().toLowerCase();
-      if (own === lower) return nodes[i];
-    }
-    return null;
-  }
-
-  function fieldValue(doc, label){
-    var el = findLabelEl(doc, label);
-    if (!el || !el.parentElement) return null;
-    var p = el.parentElement;
-    var txt = p.textContent.replace(/\s+/g, " ").trim();
-    var idx = txt.toLowerCase().indexOf(label.toLowerCase());
-    if (idx === -1) return txt || null;
-    var val = txt.slice(idx + label.length).replace(/^[\s:·—-]+/, "").trim();
-    return val || null;
-  }
-
-  function tagList(doc){
-    var el = findLabelEl(doc, "Tags");
-    if (!el) return null;
-    var p = el.parentElement, depth = 0;
-    while (p && depth < 4) {
-      var links = p.querySelectorAll("a");
-      var out = [];
-      for (var i = 0; i < links.length; i++) {
-        var t = links[i].textContent.trim();
-        if (t && t.toLowerCase() !== "tags" && out.indexOf(t) === -1) out.push(t);
-      }
-      if (out.length >= 2) return out;
-      p = p.parentElement; depth++;
-    }
-    return null;
-  }
-
-  function extractVersion(text){
-    var matches = text.match(/\bv?(\d+\.\d+\.\d+(?:\.\d+)?)\b/gi);
-    if (!matches) return null;
-    var bestParts = null, bestStr = null;
-    matches.forEach(function(v){
-      var nums = v.replace(/^v/i, "").split(".").map(Number);
-      var better = false;
-      if (!bestParts) better = true;
-      else {
-        for (var i = 0; i < Math.max(nums.length, bestParts.length); i++) {
-          var a = nums[i] || 0, b = bestParts[i] || 0;
-          if (a > b) { better = true; break; }
-          if (a < b) break;
+        function showNotification(message, type = 'info') {
+            const notification = document.getElementById('notification');
+            const text = document.getElementById('notificationText');
+            text.textContent = message;
+            text.className = type;
+            notification.classList.add('active');
+            clearTimeout(notification._timeout);
+            notification._timeout = setTimeout(() => {
+                notification.classList.remove('active');
+            }, 4000);
         }
-      }
-      if (better) { bestParts = nums; bestStr = "V" + nums.join("."); }
-    });
-    return bestStr;
-  }
 
-  function pluralRu(n, forms){
-    var d10 = n % 10, d100 = n % 100;
-    if (d10 === 1 && d100 !== 11) return forms[0];
-    if (d10 >= 2 && d10 <= 4 && (d100 < 10 || d100 >= 20)) return forms[1];
-    return forms[2];
-  }
-
-  function ruRelative(str){
-    if (!str) return null;
-    if (/just now/i.test(str)) return "только что";
-    var m = str.match(/(\d+)\s*(second|minute|hour|day|week|month|year)/i);
-    if (!m) return str;
-    var n = parseInt(m[1], 10), u = m[2].toLowerCase();
-    var forms = {
-      second: ["секунду", "секунды", "секунд"],
-      minute: ["минуту", "минуты", "минут"],
-      hour:   ["час", "часа", "часов"],
-      day:    ["день", "дня", "дней"],
-      week:   ["неделю", "недели", "недель"],
-      month:  ["месяц", "месяца", "месяцев"],
-      year:   ["год", "года", "лет"]
-    };
-    return n + " " + pluralRu(n, forms[u]) + " назад";
-  }
-
-  var statusMap = {
-    "in development": "в разработке",
-    "released": "выпущена",
-    "on hiatus": "на паузе",
-    "cancelled": "отменена",
-    "prototype": "прототип"
-  };
-
-  function extractData(html){
-    var doc = new DOMParser().parseFromString(html, "text/html");
-    var bodyText = doc.body ? doc.body.textContent : "";
-    var data = {};
-
-    /* заголовок */
-    var h1 = doc.querySelector("h1");
-    if (h1 && h1.textContent.trim()) data.title = h1.textContent.trim();
-    if (!data.title) {
-      var ogT = doc.querySelector('meta[property="og:title"]');
-      if (ogT) data.title = (ogT.getAttribute("content") || "").replace(/\s*by\s+.+$/i, "").trim();
-    }
-
-    /* описание */
-    var ogD = doc.querySelector('meta[property="og:description"]') || doc.querySelector('meta[name="description"]');
-    if (ogD && ogD.getAttribute("content")) data.description = ogD.getAttribute("content").trim();
-
-    /* JSON-LD (если вдруг есть) */
-    var ld = doc.querySelectorAll('script[type="application/ld+json"]');
-    ld.forEach(function(s){
-      try {
-        var j = JSON.parse(s.textContent);
-        if (j && j["@type"] && String(j["@type"]).match(/game/i)) {
-          if (!data.description && j.description) data.description = j.description;
-          if (j.dateModified) data.dateModified = j.dateModified;
+        async function checkLinkAvailability(url) {
+            try {
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 5000);
+                await fetch(url, {
+                    method: 'HEAD',
+                    signal: controller.signal,
+                    mode: 'no-cors'
+                });
+                clearTimeout(timeoutId);
+                return true;
+            } catch (error) {
+                return false;
+            }
         }
-      } catch (e) {}
-    });
 
-    /* инфо-панель */
-    var status = fieldValue(doc, "Status");
-    if (status) data.status = statusMap[status.toLowerCase()] || status;
-    var platforms = fieldValue(doc, "Platforms");
-    if (platforms) data.platforms = platforms;
-    var author = fieldValue(doc, "Author");
-    if (author) data.author = author;
-    var genre = fieldValue(doc, "Genre");
-    if (genre) data.genre = genre;
+        async function setupLinks() {
+            const mapLink = document.getElementById('mapLink');
+            const mapFallback = document.getElementById('mapLinkFallback');
+            
+            const map1Available = await checkLinkAvailability(MAP_LINKS[0]);
+            
+            if (map1Available) {
+                mapLink.href = MAP_LINKS[0];
+                mapLink.textContent = 'map';
+                mapLink.classList.remove('unavailable');
+                mapFallback.style.display = 'none';
+            } else {
+                const map2Available = await checkLinkAvailability(MAP_LINKS[1]);
+                if (map2Available) {
+                    mapLink.href = MAP_LINKS[1];
+                    mapLink.textContent = 'map';
+                    mapLink.classList.remove('unavailable');
+                    mapFallback.style.display = 'none';
+                } else {
+                    mapLink.href = MAP_LINKS[0];
+                    mapLink.textContent = 'map (connection error)';
+                    mapLink.classList.add('unavailable');
+                    mapFallback.style.display = 'none';
+                }
+            }
 
-    var updated = fieldValue(doc, "Updated");
-    if (updated) data.updated = ruRelative(updated);
+            const socialConfigs = [
+                { id: 'youtubeLink', url: SOCIAL_LINKS.youtube, label: 'youtube' },
+                { id: 'telegramLink', url: SOCIAL_LINKS.telegram, label: 'telegram' },
+                { id: 'discordLink', url: SOCIAL_LINKS.discord, label: 'discord' },
+                { id: 'itchLink', url: SOCIAL_LINKS.itch, label: 'itch.io' },
+                { id: 'githubLink', url: SOCIAL_LINKS.github, label: 'github' }
+            ];
 
-    /* рейтинг */
-    var rating = bodyText.match(/Rated\s+([\d.]+)\s+out of\s+5/i);
-    var ratingsCount = bodyText.match(/\((\d+)\s+total ratings?\)/i);
-    if (rating) {
-      data.rating = rating[1] + " / 5";
-      if (ratingsCount) {
-        var cnt = parseInt(ratingsCount[1], 10);
-        data.rating += " · " + cnt + " " + pluralRu(cnt, ["оценка", "оценки", "оценок"]);
-      }
-    }
-
-    /* цена */
-    if (/name your own price/i.test(bodyText) || /\bfree\b/i.test(bodyText.split("Download Now").join(" "))) {
-      data.price = "free · pay what you want";
-    } else {
-      var priceM = bodyText.match(/\$\s?\d+(?:\.\d+)?/);
-      if (priceM) data.price = priceM[0];
-    }
-
-    /* версия — из списка файлов на странице */
-    var version = extractVersion(bodyText);
-    if (version) data.version = version;
-
-    /* последний devlog */
-    var devlogVal = fieldValue(doc, "Development log") || "";
-    var dlLink = null;
-    var anchors = doc.querySelectorAll('a[href*="/devlog/"]');
-    for (var i = 0; i < anchors.length; i++) {
-      var at = anchors[i].textContent.trim();
-      if (at && !/^devlog$/i.test(at) && !/^development log$/i.test(at)) { dlLink = at; break; }
-    }
-    var whenM = devlogVal.match(/(just now|\d+\s*(?:second|minute|hour|day|week|month|year)s?\s*ago)/i);
-    if (dlLink || devlogVal) {
-      var when = whenM ? ruRelative(whenM[1]) : (data.updated ? data.updated : "");
-      data.devlog = (dlLink || devlogVal).trim() + (when ? " · " + when : "");
-    }
-
-    /* теги */
-    data.tags = tagList(doc);
-
-    return data;
-  }
-
-  /* --- применение данных к DOM --- */
-  function setLive(name, value){
-    if (value === null || value === undefined || value === "") return;
-    var els = document.querySelectorAll('[data-live="' + name + '"]');
-    els.forEach(function(el){
-      if (el.textContent !== String(value)) {
-        el.textContent = value;
-        if (!reduced) {
-          el.classList.remove("dl-flash");
-          void el.offsetWidth;
-          el.classList.add("dl-flash");
+            for (const config of socialConfigs) {
+                const el = document.getElementById(config.id);
+                const available = await checkLinkAvailability(config.url);
+                if (!available) {
+                    el.textContent = `${config.label} (connection error)`;
+                    el.classList.add('unavailable');
+                } else {
+                    el.classList.remove('unavailable');
+                }
+            }
         }
-      }
-    });
-  }
 
-  function applyData(d){
-    setLive("title", d.title);
-    setLive("description", d.description);
-    setLive("status", d.status);
-    setLive("version", d.version);
-    setLive("updated", d.updated);
-    setLive("platforms", d.platforms);
-    if (d.platforms) setLive("platforms-inline", d.platforms.toLowerCase());
-    setLive("genre", d.genre);
-    setLive("rating", d.rating);
-    setLive("price", d.price);
-    if (d.price) setLive("price-inline", d.price);
-    setLive("author", d.author);
-    setLive("devlog", d.devlog);
+        async function setupContactsPage() {
+            const contactsList = document.getElementById('contactsList');
+            
+            let html = '';
+            for (const contact of CONTACTS_DATA) {
+                const available = await checkLinkAvailability(contact.url);
+                const status = available ? '' : 'unavailable';
+                const statusText = available ? '' : ' (connection error)';
+                
+                html += `
+                    <div class="contact-item">
+                        <span class="contact-label">${contact.label}</span>
+                        <a href="${contact.url}" target="_blank" class="contact-link ${status}">${contact.url}${statusText}</a>
+                        <span class="contact-info">${contact.info}</span>
+                    </div>
+                `;
+            }
+            contactsList.innerHTML = html;
+        }
 
-    if (d.tags && d.tags.length) {
-      var wrap = document.getElementById("tagsWrap");
-      wrap.innerHTML = "";
-      d.tags.slice(0, 10).forEach(function(t){
-        var chip = document.createElement("span");
-        chip.className = "tag from-live";
-        chip.textContent = t;
-        wrap.appendChild(chip);
-      });
-    }
-  }
+        function setupItchIframe() {
+            const iframe = document.getElementById('itchFrame');
+            const infoDiv = document.getElementById('itchInfo');
+            
+            let loaded = false;
+            
+            iframe.addEventListener('load', function() {
+                loaded = true;
+                infoDiv.classList.remove('show');
+            });
+            
+            setTimeout(() => {
+                if (!loaded) {
+                    infoDiv.classList.add('show');
+                    iframe.style.display = 'none';
+                }
+            }, 8000);
+            
+            iframe.addEventListener('error', function() {
+                infoDiv.classList.add('show');
+                iframe.style.display = 'none';
+            });
+        }
 
-  /* --- кэш в localStorage --- */
-  function saveCache(d){
-    try { localStorage.setItem(CACHE_KEY, JSON.stringify({t: Date.now(), d: d})); } catch (e) {}
-  }
-  function loadCache(){
-    try {
-      var raw = localStorage.getItem(CACHE_KEY);
-      if (!raw) return null;
-      var j = JSON.parse(raw);
-      return j && j.d ? j : null;
-    } catch (e) { return null; }
-  }
+        async function loadBlog() {
+            const container = document.getElementById('blogContent');
+            
+            try {
+                const response = await fetch(BLOG_FILE_URL);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const text = await response.text();
+                const entries = text.split(/\n\s*\n/).filter(entry => entry.trim().length > 0);
+                
+                if (entries.length === 0) {
+                    container.innerHTML = '<div class="blog-empty">новых новостей нет</div>';
+                    return;
+                }
+                
+                let html = '';
+                for (const entry of entries) {
+                    const lines = entry.split('\n').filter(line => line.trim().length > 0);
+                    if (lines.length === 0) continue;
+                    
+                    const firstLine = lines[0].trim();
+                    const isDate = /\d{1,2}[\/\.]\d{1,2}[\/\.]\d{2,4}/.test(firstLine);
+                    
+                    if (isDate) {
+                        const date = firstLine;
+                        const textContent = lines.slice(1).join('\n').trim();
+                        html += `
+                            <div class="blog-entry">
+                                <div class="blog-date">${date}</div>
+                                <div class="blog-text">${textContent}</div>
+                            </div>
+                        `;
+                    } else {
+                        html += `
+                            <div class="blog-entry">
+                                <div class="blog-text">${lines.join('\n').trim()}</div>
+                            </div>
+                        `;
+                    }
+                }
+                
+                container.innerHTML = html;
+                
+            } catch (error) {
+                container.innerHTML = '<div class="blog-error">connection error</div>';
+            }
+        }
 
-  /* --- запуск --- */
-  document.querySelectorAll("[data-live]").forEach(function(el){ el.classList.add("dl-loading"); });
+        function goToSlide(index) {
+            if (index < 0) index = totalSlides - 1;
+            if (index >= totalSlides) index = 0;
+            currentSlide = index;
 
-  var cached = loadCache();
-  if (cached) { applyData(cached.d); setLiveState("cache"); }
-  else setLiveState("offline");
+            const track = document.getElementById('sliderTrack');
+            track.style.transform = `translateX(-${currentSlide * 100}%)`;
 
-  loadItchPage(GAME_URL).then(function(html){
-    var d = extractData(html);
-    if (d.title || d.version || d.updated) {
-      applyData(d);
-      saveCache(d);
-      setLiveState("live");
-    } else {
-      setLiveState(cached ? "cache" : "offline");
-    }
-    document.querySelectorAll("[data-live]").forEach(function(el){ el.classList.remove("dl-loading"); });
-  }).catch(function(){
-    setLiveState(cached ? "cache" : "offline");
-    document.querySelectorAll("[data-live]").forEach(function(el){ el.classList.remove("dl-loading"); });
-  });
+            document.querySelectorAll('.slider-dots .dot').forEach((dot, i) => {
+                dot.classList.toggle('active', i === currentSlide);
+            });
+        }
 
-  /* тихое авто-обновление данных каждые 5 минут, пока страница открыта */
-  setInterval(function(){
-    loadItchPage(GAME_URL).then(function(html){
-      var d = extractData(html);
-      if (d.title || d.version || d.updated) { applyData(d); saveCache(d); setLiveState("live"); }
-    }).catch(function(){});
-  }, 5 * 60 * 1000);
-})();
-</script>
+        function loadScreenshots() {
+            const track = document.getElementById('sliderTrack');
+            const dotsContainer = document.getElementById('sliderDots');
+            
+            totalSlides = SCREENSHOTS.length;
+            dotsContainer.innerHTML = '';
+
+            SCREENSHOTS.forEach((src, index) => {
+                const slide = document.createElement('div');
+                slide.className = 'screenshot loading';
+                slide.textContent = 'loading...';
+                track.appendChild(slide);
+
+                const dot = document.createElement('button');
+                dot.className = 'dot' + (index === 0 ? ' active' : '');
+                dot.setAttribute('aria-label', `screenshot ${index + 1}`);
+                dot.addEventListener('click', () => goToSlide(index));
+                dotsContainer.appendChild(dot);
+
+                const loadImage = async () => {
+                    try {
+                        const response = await fetch(src);
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! status: ${response.status}`);
+                        }
+                        const blob = await response.blob();
+                        const url = URL.createObjectURL(blob);
+                        const img = document.createElement('img');
+                        img.src = url;
+                        img.className = 'screenshot';
+                        img.alt = `screenshot ${index + 1}`;
+                        slide.replaceWith(img);
+                        slidesLoaded++;
+                        if (slidesLoaded === totalSlides) {
+                            goToSlide(0);
+                        }
+                    } catch (error) {
+                        slide.className = 'screenshot error';
+                        slide.textContent = 'error';
+                    }
+                };
+                
+                loadImage();
+            });
+
+            document.getElementById('sliderPrev').addEventListener('click', () => goToSlide(currentSlide - 1));
+            document.getElementById('sliderNext').addEventListener('click', () => goToSlide(currentSlide + 1));
+
+            document.addEventListener('keydown', (e) => {
+                if (!document.getElementById('projectsPage').classList.contains('active')) return;
+                if (e.key === 'ArrowLeft') goToSlide(currentSlide - 1);
+                if (e.key === 'ArrowRight') goToSlide(currentSlide + 1);
+            });
+        }
+
+        function getGitHubDownloadUrl(release) {
+            if (release && release.assets && release.assets.length > 0) {
+                const asset = release.assets.find(a =>
+                    a.name.endsWith('.zip') ||
+                    a.name.endsWith('.exe') ||
+                    a.name.endsWith('.apk') ||
+                    a.name.endsWith('.dmg')
+                );
+                if (asset) {
+                    return asset.browser_download_url;
+                }
+                return release.assets[0].browser_download_url;
+            }
+            return null;
+        }
+
+        function downloadFile(url, filename) {
+            if (!url) {
+                showNotification('error');
+                return;
+            }
+
+            showNotification(`done ${filename || 'for'}...`, 'info');
+
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = filename || 'download';
+            link.target = '_blank';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+
+            setTimeout(() => {
+                showNotification(`loading ${filename || 'file'} start`, 'success');
+            }, 500);
+        }
+
+        async function downloadVersion(versionTag) {
+            showNotification(`...`, 'info');
+
+            const release = releasesData.find(r => r.tag_name === versionTag);
+            if (!release) {
+                showNotification(`version ${versionTag} error`, 'error');
+                return;
+            }
+
+            const githubUrl = getGitHubDownloadUrl(release);
+            const filename = release.assets && release.assets.length > 0
+                ? release.assets[0].name
+                : `zombotanic-${versionTag}.zip`;
+
+            if (githubUrl) {
+                showNotification(`examination GitHub...`, 'info');
+                const githubAvailable = await checkLinkAvailability('https://github.com');
+
+                if (githubAvailable) {
+                    downloadFile(githubUrl, filename);
+                    return;
+                } else {
+                    showNotification(`GitHub error itch.io...`, 'info');
+                }
+            } else {
+                showNotification(`file error: GitHub, examination itch.io...`, 'info');
+            }
+
+            const itchAvailable = await checkLinkAvailability(ITCH_URL);
+            if (itchAvailable) {
+                showNotification(`downloading from itch io`, 'info');
+                window.open(ITCH_URL, '_blank');
+                setTimeout(() => {
+                    showNotification(`open itch.io`, 'success');
+                }, 500);
+            } else {
+                showNotification(`everyone error`, 'error');
+            }
+        }
+
+        async function fetchReleasesFromGitHub() {
+            try {
+                const response = await fetch(GITHUB_API_URL);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const releases = await response.json();
+                return releases;
+            } catch (error) {
+                return null;
+            }
+        }
+
+        async function updateVersionInfo() {
+            const versionElement = document.getElementById('currentVersion');
+            const versionList = document.getElementById('versionList');
+
+            try {
+                const releases = await fetchReleasesFromGitHub();
+
+                if (releases && releases.length > 0) {
+                    releasesData = releases;
+                    const sortedReleases = releases.sort((a, b) =>
+                        new Date(b.created_at) - new Date(a.created_at)
+                    );
+
+                    const latestRelease = sortedReleases[0];
+                    currentVersionTag = latestRelease.tag_name || 'unknown';
+                    versionElement.textContent = currentVersionTag;
+                    versionElement.className = '';
+
+                    let historyHtml = '';
+                    sortedReleases.forEach((release, index) => {
+                        const date = new Date(release.created_at).toLocaleDateString('ru-RU');
+                        const version = release.tag_name || 'unknown';
+                        const name = release.name && release.name !== release.tag_name ? ` — ${release.name}` : '';
+
+                        if (index === 0) {
+                            historyHtml += `<div class="version-item now" data-version="${version}">${version}${name} (now)</div>`;
+                        } else {
+                            historyHtml += `<div class="version-item" data-version="${version}">${version}${name} (${date})</div>`;
+                        }
+                    });
+
+                    versionList.innerHTML = historyHtml;
+
+                    document.querySelectorAll('.history-page .version-item').forEach(item => {
+                        item.addEventListener('click', function() {
+                            const version = this.dataset.version;
+                            if (version) {
+                                downloadVersion(version);
+                            }
+                        });
+                    });
+
+                } else {
+                    currentVersionTag = FALLBACK_VERSION;
+                    versionElement.textContent = FALLBACK_VERSION;
+                    versionElement.className = '';
+                    versionList.innerHTML = FALLBACK_HISTORY.map((v, index) => {
+                        const version = v.split(' — ')[0];
+                        if (index === 0) {
+                            return `<div class="version-item now" data-version="${version}">${v} (now)</div>`;
+                        }
+                        return `<div class="version-item" data-version="${version}">${v}</div>`;
+                    }).join('');
+
+                    document.querySelectorAll('.history-page .version-item').forEach(item => {
+                        item.addEventListener('click', function() {
+                            const version = this.dataset.version;
+                            if (version) {
+                                downloadVersion(version);
+                            }
+                        });
+                    });
+                }
+            } catch (error) {
+                currentVersionTag = FALLBACK_VERSION;
+                versionElement.textContent = FALLBACK_VERSION;
+                versionElement.className = '';
+                versionList.innerHTML = FALLBACK_HISTORY.map((v, index) => {
+                    const version = v.split(' — ')[0];
+                    if (index === 0) {
+                        return `<div class="version-item now" data-version="${version}">${v} (now)</div>`;
+                    }
+                    return `<div class="version-item" data-version="${version}">${v}</div>`;
+                }).join('');
+
+                document.querySelectorAll('.history-page .version-item').forEach(item => {
+                    item.addEventListener('click', function() {
+                        const version = this.dataset.version;
+                        if (version) {
+                            downloadVersion(version);
+                        }
+                    });
+                });
+            }
+        }
+
+        const pages = {
+            main: document.getElementById('mainPage'),
+            projects: document.getElementById('projectsPage'),
+            blog: document.getElementById('blogPage'),
+            contacts: document.getElementById('contactsPage'),
+            about: document.getElementById('aboutPage'),
+            history: document.getElementById('historyPage')
+        };
+
+        function showPage(pageId) {
+            Object.values(pages).forEach(p => {
+                p.classList.remove('active');
+                p.style.display = 'none';
+            });
+
+            const target = pages[pageId];
+            if (target) {
+                target.style.display = 'block';
+                target.classList.add('active');
+                window.history.pushState({ page: pageId }, '', pageId === 'main' ? window.location.pathname : `?page=${pageId}`);
+            }
+        }
+
+        document.getElementById('versionClick').addEventListener('click', function() {
+            if (currentVersionTag) {
+                downloadVersion(currentVersionTag);
+            } else {
+                showNotification('Версия ещё не загружена', 'error');
+            }
+        });
+
+        document.getElementById('historyToggle').addEventListener('click', function(e) {
+            e.preventDefault();
+            showPage('history');
+        });
+
+        document.querySelectorAll('.bottombar .link[data-page]').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const page = this.dataset.page;
+                if (page) {
+                    showPage(page);
+                }
+            });
+        });
+
+        document.querySelectorAll('.back-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const page = this.dataset.page || 'main';
+                showPage(page);
+            });
+        });
+
+        window.addEventListener('popstate', function(event) {
+            const page = event.state ? event.state.page : 'main';
+            showPage(page);
+        });
+
+        updateVersionInfo();
+        setupLinks();
+        setupContactsPage();
+        loadScreenshots();
+        setupItchIframe();
+        loadBlog();
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const pageParam = urlParams.get('page');
+        if (pageParam && pages[pageParam]) {
+            showPage(pageParam);
+        } else {
+            showPage('main');
+        }
+    </script>
+
 </body>
 </html>
