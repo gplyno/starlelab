@@ -1,2 +1,3 @@
 14.08.2026
-a website was created
+V1.7.0: Updated map
+details: enlarged the entire map and added one location
