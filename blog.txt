@@ -1,3 +1,6 @@
+23.08.2026
+V1.8.0: Hunger and thirst have been added, and the menu has been modified.
+
 19.08.2026
 V1.7.4: visual improvements
 
