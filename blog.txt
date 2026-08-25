@@ -1,3 +1,6 @@
+25.08.2026
+V1.8.3: Tree felling and new associated crafting recipes have been added.
+
 24.08.2026
 V1.8.2: crafting change
 
