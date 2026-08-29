@@ -379,41 +379,47 @@
             color: #999;
         }
 
-        .blog-content {
+        .blog-content, .thoughts-content {
             max-width: 700px;
             margin-top: 10px;
         }
 
-        .blog-content .blog-entry {
+        .blog-content .blog-entry,
+        .thoughts-content .thoughts-entry {
             padding: 16px 0;
             border-bottom: 1px solid #1a1a1a;
         }
 
-        .blog-content .blog-entry:last-child {
+        .blog-content .blog-entry:last-child,
+        .thoughts-content .thoughts-entry:last-child {
             border-bottom: none;
         }
 
-        .blog-content .blog-entry .blog-date {
+        .blog-content .blog-entry .blog-date,
+        .thoughts-content .thoughts-entry .thoughts-date {
             color: #555;
             font-size: 0.8rem;
             margin-bottom: 4px;
         }
 
-        .blog-content .blog-entry .blog-text {
+        .blog-content .blog-entry .blog-text,
+        .thoughts-content .thoughts-entry .thoughts-text {
             color: #aaa;
             line-height: 1.7;
             font-size: 1rem;
             white-space: pre-wrap;
         }
 
-        .blog-content .blog-empty {
+        .blog-content .blog-empty,
+        .thoughts-content .thoughts-empty {
             color: #555;
             font-size: 1rem;
             text-align: center;
             padding: 40px 0;
         }
 
-        .blog-content .blog-error {
+        .blog-content .blog-error,
+        .thoughts-content .thoughts-error {
             color: #aa5555;
             font-size: 0.95rem;
             text-align: center;
@@ -597,6 +603,14 @@
         <a class="back-link" data-page="main">← back</a>
     </section>
 
+    <section class="page" id="thoughtsPage">
+        <h2>thoughts</h2>
+        <div class="thoughts-content" id="thoughtsContent">
+            <div class="thoughts-empty">loading...</div>
+        </div>
+        <a class="back-link" data-page="main">← back</a>
+    </section>
+
     <section class="page" id="contactsPage">
         <h2>social media</h2>
         <div class="contacts-list" id="contactsList"></div>
@@ -606,8 +620,8 @@
     <section class="page" id="aboutPage">
         <h2>about us</h2>
         <p>
-            as we’ve said, we’re a small studio. 
-            but we’ll strive to create a great game - one that people will want to play for a long time.
+            as we've said, we're a small studio. 
+            but we'll strive to create a great game - one that people will want to play for a long time.
         </p>
         <a class="back-link" data-page="main">← back</a>
     </section>
@@ -626,6 +640,7 @@
             <a class="link" data-page="main">home</a>
             <a class="link" data-page="projects">projects</a>
             <a class="link" data-page="blog">blog</a>
+            <a class="link" data-page="thoughts">thoughts</a>
             <a class="link" data-page="contacts">social media</a>
             <a class="link" data-page="about">about us</a>
         </div>
@@ -651,6 +666,7 @@
         const ITCH_URL = 'https://starlelab.itch.io/zombotanic';
         const GITHUB_REPO_URL = 'https://github.com/gplyno';
         const BLOG_FILE_URL = 'https://raw.githubusercontent.com/gplyno/starlelab/main/blog.txt';
+        const THOUGHTS_FILE_URL = 'https://raw.githubusercontent.com/gplyno/starlelab/main/thoughts.txt';
 
         const MAP_LINKS = [
             'https://gplyno.github.io/zombotanic_map/',
@@ -858,6 +874,57 @@
                 
             } catch (error) {
                 container.innerHTML = '<div class="blog-error">connection error</div>';
+            }
+        }
+
+        async function loadThoughts() {
+            const container = document.getElementById('thoughtsContent');
+            
+            try {
+                const response = await fetch(THOUGHTS_FILE_URL);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const text = await response.text();
+                const entries = text.split(/\n\s*\n/).filter(entry => entry.trim().length > 0);
+                
+                if (entries.length === 0) {
+                    container.innerHTML = '<div class="thoughts-empty">no thoughts yet</div>';
+                    return;
+                }
+                
+                let html = '';
+                for (const entry of entries) {
+                    const lines = entry.split('\n').filter(line => line.trim().length > 0);
+                    if (lines.length === 0) continue;
+                    
+                    const firstLine = lines[0].trim();
+                    const isDate = /\d{1,2}[\/\.]\d{1,2}[\/\.]\d{2,4}/.test(firstLine);
+                    
+                    if (isDate) {
+                        const date = firstLine;
+                        const textContent = lines.slice(1).join('\n').trim();
+                        html += `
+                            <div class="thoughts-entry">
+                                <div class="thoughts-date">${date}</div>
+                                <div class="thoughts-text">${textContent}</div>
+                            </div>
+                        `;
+                    } else {
+                        html += `
+                            <div class="thoughts-entry">
+                                <div class="thoughts-text">${lines.join('\n').trim()}</div>
+                            </div>
+                        `;
+                    }
+                }
+                
+                container.innerHTML = html;
+                
+            } catch (error) {
+                container.innerHTML = '<div class="thoughts-error">connection error</div>';
             }
         }
 
@@ -1109,6 +1176,7 @@
             main: document.getElementById('mainPage'),
             projects: document.getElementById('projectsPage'),
             blog: document.getElementById('blogPage'),
+            thoughts: document.getElementById('thoughtsPage'),
             contacts: document.getElementById('contactsPage'),
             about: document.getElementById('aboutPage'),
             history: document.getElementById('historyPage')
@@ -1170,6 +1238,7 @@
         loadScreenshots();
         setupItchIframe();
         loadBlog();
+        loadThoughts();
 
         const urlParams = new URLSearchParams(window.location.search);
         const pageParam = urlParams.get('page');
