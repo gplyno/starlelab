@@ -1,4 +1,7 @@
 29.08.2026:
+V1.8.5: Bugs fixed, FPS drop issue resolved, FPS capped at 60 (configurable in the future).
+
+29.08.2026:
 V1.8.4: Beta update. Houses added, map expanded, and features added for future building updates. NOTE: Bugs are possible.
 
 25.08.2026
