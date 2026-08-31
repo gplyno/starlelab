@@ -1,2 +1,5 @@
+31.08.2026
+Thoughts on V1.9.1: Add more animations and create a trailer in the future.
+
 29.08.2026:
-Thoughts on v1.8.5: fix bugs and add something.
+Thoughts on V1.8.5: fix bugs and add something.
