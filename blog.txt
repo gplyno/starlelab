@@ -1,3 +1,6 @@
+31.08.2026
+V1.9.0: A complete overhaul of the animations has begun, moving from the red circle to a proper player model; the idle and walking animations are already in place.
+
 29.08.2026:
 V1.8.5: Bugs fixed, FPS drop issue resolved, FPS capped at 60 (configurable in the future).
 
