@@ -1,32 +1,35 @@
+25.09.2026
+V1.9.3: Textures and sprites have been updated, a smooth transition between map tiles has been added, and the game size has been optimized
+
 13.09.2026
 V1.9.2: Building mechanics have been added, but it's very rough!
 
 31.08.2026
-V1.9.0: A complete overhaul of the animations has begun, moving from the red circle to a proper player model; the idle and walking animations are already in place.
+V1.9.0: A complete overhaul of the animations has begun, moving from the red circle to a proper player model; the idle and walking animations are already in place
 
 29.08.2026:
-V1.8.5: Bugs fixed, FPS drop issue resolved, FPS capped at 60 (configurable in the future).
+V1.8.5: Bugs fixed, FPS drop issue resolved, FPS capped at 60 (configurable in the future)
 
 29.08.2026:
-V1.8.4: Beta update. Houses added, map expanded, and features added for future building updates. NOTE: Bugs are possible.
+V1.8.4: Beta update. Houses added, map expanded, and features added for future building updates. NOTE: Bugs are possible
 
 25.08.2026
-V1.8.3: Tree felling and new associated crafting recipes have been added.
+V1.8.3: Tree felling and new associated crafting recipes have been added
 
 24.08.2026
 V1.8.2: crafting change
 
 23.08.2026
-V1.8.0: Hunger and thirst have been added, and the menu has been modified.
+V1.8.0: Hunger and thirst have been added, and the menu has been modified
 
 19.08.2026
 V1.7.4: visual improvements
 
 18.08.2026
-V1.7.2: Added a death interface.
-Save files are now stored in AppData.
-Added assets for future use.
+V1.7.2: Added a death interface
+Save files are now stored in AppData
+Added assets for future use
 
 14.08.2026
 V1.7.0: Updated map
-details: enlarged the entire map and added one location.
+details: enlarged the entire map and added one location
