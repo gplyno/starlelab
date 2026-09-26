@@ -582,11 +582,18 @@
         </div>
 
         <div class="projects-iframe" id="itchContainer">
-            <iframe frameborder="0" src="https://itch.io/embed/4666491?border_width=0&amp;bg_color=3f3f3f&amp;fg_color=ffffff&amp;border_color=3f3f3f" width="550" height="165"><a href="https://starlelab.itch.io/zombotanic">zombotanic by starlelab</a></iframe>
+            <iframe
+                id="itchFrame"
+                title="zombotanic on itch.io"
+                frameborder="0"
+                src="https://itch.io/embed/4666491?linkback=true&amp;bg_color=121212&amp;fg_color=ffffff&amp;link_color=e53b44&amp;border_color=535353"
+                width="552"
+                height="167"
+            ><a href="https://starlelab.itch.io/zombotanic">zombotanic by starlelab</a></iframe>
             <div class="iframe-info" id="itchInfo">itch.io widget is temporarily unavailable</div>
         </div>
 
-        <a href="https://starlelab.itch.io/zombotanic" target="_blank" class="projects-mirror">
+        <a href="https://starlelab.itch.io/zombotanic" target="_blank" rel="noopener noreferrer" class="projects-mirror">
             itch io
         </a>
 
@@ -645,18 +652,17 @@
 
         <div class="column">
             <div class="column-title">social media</div>
-            <a class="link external" id="youtubeLink" href="https://youtube.com/@gplyno" target="_blank">youtube</a>
-            <a class="link external" id="telegramLink" href="https://t.me/starlelab" target="_blank">telegram</a>
-            <a class="link external" id="discordLink" href="https://discord.gg/4XShPw3exN" target="_blank">discord</a>
-            <a class="link external" id="itchLink" href="https://starlelab.itch.io/zombotanic" target="_blank">itch.io</a>
-            <a class="link external" id="githubLink" href="https://github.com/gplyno" target="_blank">github</a>
-            <a class="link external" id="xLink" href="https://x.com/gplyno" target="_blank">X (twitter)</a>
+            <a class="link external" id="youtubeLink" href="https://youtube.com/@gplyno" target="_blank" rel="noopener noreferrer">youtube</a>
+            <a class="link external" id="telegramLink" href="https://t.me/starlelab" target="_blank" rel="noopener noreferrer">telegram</a>
+            <a class="link external" id="discordLink" href="https://discord.gg/4XShPw3exN" target="_blank" rel="noopener noreferrer">discord</a>
+            <a class="link external" id="itchLink" href="https://starlelab.itch.io/zombotanic" target="_blank" rel="noopener noreferrer">itch.io</a>
+            <a class="link external" id="githubLink" href="https://github.com/gplyno" target="_blank" rel="noopener noreferrer">github</a>
+            <a class="link external" id="xLink" href="https://x.com/gplyno" target="_blank" rel="noopener noreferrer">X (twitter)</a>
         </div>
 
         <div class="column">
             <div class="column-title">tool</div>
-            <a class="link external" id="mapLink" href="#" target="_blank">map</a>
-            <a class="link external" id="mapLinkFallback" href="#" target="_blank" style="display:none;">map</a>
+            <a class="link external" id="mapLink" href="#" target="_blank" rel="noopener noreferrer">map</a>
         </div>
     </footer>
 
@@ -677,7 +683,8 @@
             telegram: 'https://t.me/starlelab',
             discord: 'https://discord.gg/4XShPw3exN',
             itch: ITCH_URL,
-            github: GITHUB_REPO_URL
+            github: GITHUB_REPO_URL,
+            x: 'https://x.com/gplyno'
         };
 
         const CONTACTS_DATA = [
@@ -719,6 +726,7 @@
             }, 4000);
         }
 
+        // Проверка доступности (best-effort, no-cors)
         async function checkLinkAvailability(url) {
             try {
                 const controller = new AbortController();
@@ -726,7 +734,8 @@
                 await fetch(url, {
                     method: 'HEAD',
                     signal: controller.signal,
-                    mode: 'no-cors'
+                    mode: 'no-cors',
+                    cache: 'no-store'
                 });
                 clearTimeout(timeoutId);
                 return true;
@@ -735,30 +744,31 @@
             }
         }
 
+        // Параллельная проверка списка ссылок
+        async function checkLinksParallel(items) {
+            return Promise.all(items.map(async (item) => {
+                const available = await checkLinkAvailability(item.url);
+                return Object.assign({}, item, { available });
+            }));
+        }
+
         async function setupLinks() {
             const mapLink = document.getElementById('mapLink');
-            const mapFallback = document.getElementById('mapLinkFallback');
-            
-            const map1Available = await checkLinkAvailability(MAP_LINKS[0]);
-            
-            if (map1Available) {
-                mapLink.href = MAP_LINKS[0];
+
+            const mapResults = await checkLinksParallel(
+                MAP_LINKS.map((url, i) => ({ url, i }))
+            );
+
+            const firstAvailable = mapResults.find(r => r.available);
+
+            if (firstAvailable) {
+                mapLink.href = firstAvailable.url;
                 mapLink.textContent = 'map';
                 mapLink.classList.remove('unavailable');
-                mapFallback.style.display = 'none';
             } else {
-                const map2Available = await checkLinkAvailability(MAP_LINKS[1]);
-                if (map2Available) {
-                    mapLink.href = MAP_LINKS[1];
-                    mapLink.textContent = 'map';
-                    mapLink.classList.remove('unavailable');
-                    mapFallback.style.display = 'none';
-                } else {
-                    mapLink.href = MAP_LINKS[0];
-                    mapLink.textContent = 'map (connection error)';
-                    mapLink.classList.add('unavailable');
-                    mapFallback.style.display = 'none';
-                }
+                mapLink.href = MAP_LINKS[0];
+                mapLink.textContent = 'map (connection error)';
+                mapLink.classList.add('unavailable');
             }
 
             const socialConfigs = [
@@ -766,14 +776,17 @@
                 { id: 'telegramLink', url: SOCIAL_LINKS.telegram, label: 'telegram' },
                 { id: 'discordLink', url: SOCIAL_LINKS.discord, label: 'discord' },
                 { id: 'itchLink', url: SOCIAL_LINKS.itch, label: 'itch.io' },
-                { id: 'githubLink', url: SOCIAL_LINKS.github, label: 'github' }
+                { id: 'githubLink', url: SOCIAL_LINKS.github, label: 'github' },
+                { id: 'xLink', url: SOCIAL_LINKS.x, label: 'X (twitter)' }
             ];
 
-            for (const config of socialConfigs) {
-                const el = document.getElementById(config.id);
-                const available = await checkLinkAvailability(config.url);
-                if (!available) {
-                    el.textContent = `${config.label} (connection error)`;
+            const results = await checkLinksParallel(socialConfigs);
+
+            for (const res of results) {
+                const el = document.getElementById(res.id);
+                if (!el) continue;
+                if (!res.available) {
+                    el.textContent = `${res.label} (connection error)`;
                     el.classList.add('unavailable');
                 } else {
                     el.classList.remove('unavailable');
@@ -783,151 +796,126 @@
 
         async function setupContactsPage() {
             const contactsList = document.getElementById('contactsList');
-            
-            let html = '';
-            for (const contact of CONTACTS_DATA) {
-                const available = await checkLinkAvailability(contact.url);
-                const status = available ? '' : 'unavailable';
-                const statusText = available ? '' : ' (connection error)';
-                
-                html += `
+
+            const results = await checkLinksParallel(CONTACTS_DATA);
+
+            const html = results.map((contact) => {
+                const status = contact.available ? '' : 'unavailable';
+                const statusText = contact.available ? '' : ' (connection error)';
+                return `
                     <div class="contact-item">
                         <span class="contact-label">${contact.label}</span>
-                        <a href="${contact.url}" target="_blank" class="contact-link ${status}">${contact.url}${statusText}</a>
+                        <a href="${contact.url}" target="_blank" rel="noopener noreferrer" class="contact-link ${status}">${contact.url}${statusText}</a>
                         <span class="contact-info">${contact.info}</span>
                     </div>
                 `;
-            }
+            }).join('');
+
             contactsList.innerHTML = html;
         }
 
         function setupItchIframe() {
             const iframe = document.getElementById('itchFrame');
             const infoDiv = document.getElementById('itchInfo');
-            
+            if (!iframe || !infoDiv) return;
+
             let loaded = false;
-            
-            iframe.addEventListener('load', function() {
+            let failed = false;
+
+            const fail = () => {
+                if (failed) return;
+                failed = true;
+                infoDiv.classList.add('show');
+                iframe.style.display = 'none';
+            };
+
+            iframe.addEventListener('load', function () {
                 loaded = true;
                 infoDiv.classList.remove('show');
             });
-            
+
+            iframe.addEventListener('error', fail);
+
             setTimeout(() => {
-                if (!loaded) {
-                    infoDiv.classList.add('show');
-                    iframe.style.display = 'none';
-                }
+                if (!loaded) fail();
             }, 8000);
-            
-            iframe.addEventListener('error', function() {
-                infoDiv.classList.add('show');
-                iframe.style.display = 'none';
-            });
         }
 
-        async function loadBlog() {
-            const container = document.getElementById('blogContent');
-            
+        async function loadTextEntries(url, container, emptyText, entryClass, dateClass, textClass, errorClass) {
             try {
-                const response = await fetch(BLOG_FILE_URL);
-                
+                const response = await fetch(url, { cache: 'no-store' });
+
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
-                
+
                 const text = await response.text();
                 const entries = text.split(/\n\s*\n/).filter(entry => entry.trim().length > 0);
-                
+
                 if (entries.length === 0) {
-                    container.innerHTML = '<div class="blog-empty">новых новостей нет</div>';
+                    container.innerHTML = `<div class="${emptyText}">no entries yet</div>`;
                     return;
                 }
-                
+
                 let html = '';
                 for (const entry of entries) {
                     const lines = entry.split('\n').filter(line => line.trim().length > 0);
                     if (lines.length === 0) continue;
-                    
+
                     const firstLine = lines[0].trim();
                     const isDate = /\d{1,2}[\/\.]\d{1,2}[\/\.]\d{2,4}/.test(firstLine);
-                    
+
                     if (isDate) {
                         const date = firstLine;
                         const textContent = lines.slice(1).join('\n').trim();
                         html += `
-                            <div class="blog-entry">
-                                <div class="blog-date">${date}</div>
-                                <div class="blog-text">${textContent}</div>
+                            <div class="${entryClass}">
+                                <div class="${dateClass}">${date}</div>
+                                <div class="${textClass}">${textContent}</div>
                             </div>
                         `;
                     } else {
                         html += `
-                            <div class="blog-entry">
-                                <div class="blog-text">${lines.join('\n').trim()}</div>
+                            <div class="${entryClass}">
+                                <div class="${textClass}">${lines.join('\n').trim()}</div>
                             </div>
                         `;
                     }
                 }
-                
+
                 container.innerHTML = html;
-                
+
             } catch (error) {
-                container.innerHTML = '<div class="blog-error">connection error</div>';
+                container.innerHTML = `<div class="${errorClass}">connection error</div>`;
             }
         }
 
-        async function loadThoughts() {
-            const container = document.getElementById('thoughtsContent');
-            
-            try {
-                const response = await fetch(THOUGHTS_FILE_URL);
-                
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                
-                const text = await response.text();
-                const entries = text.split(/\n\s*\n/).filter(entry => entry.trim().length > 0);
-                
-                if (entries.length === 0) {
-                    container.innerHTML = '<div class="thoughts-empty">no thoughts yet</div>';
-                    return;
-                }
-                
-                let html = '';
-                for (const entry of entries) {
-                    const lines = entry.split('\n').filter(line => line.trim().length > 0);
-                    if (lines.length === 0) continue;
-                    
-                    const firstLine = lines[0].trim();
-                    const isDate = /\d{1,2}[\/\.]\d{1,2}[\/\.]\d{2,4}/.test(firstLine);
-                    
-                    if (isDate) {
-                        const date = firstLine;
-                        const textContent = lines.slice(1).join('\n').trim();
-                        html += `
-                            <div class="thoughts-entry">
-                                <div class="thoughts-date">${date}</div>
-                                <div class="thoughts-text">${textContent}</div>
-                            </div>
-                        `;
-                    } else {
-                        html += `
-                            <div class="thoughts-entry">
-                                <div class="thoughts-text">${lines.join('\n').trim()}</div>
-                            </div>
-                        `;
-                    }
-                }
-                
-                container.innerHTML = html;
-                
-            } catch (error) {
-                container.innerHTML = '<div class="thoughts-error">connection error</div>';
-            }
+        function loadBlog() {
+            loadTextEntries(
+                BLOG_FILE_URL,
+                document.getElementById('blogContent'),
+                'blog-empty',
+                'blog-entry',
+                'blog-date',
+                'blog-text',
+                'blog-error'
+            );
+        }
+
+        function loadThoughts() {
+            loadTextEntries(
+                THOUGHTS_FILE_URL,
+                document.getElementById('thoughtsContent'),
+                'thoughts-empty',
+                'thoughts-entry',
+                'thoughts-date',
+                'thoughts-text',
+                'thoughts-error'
+            );
         }
 
         function goToSlide(index) {
+            if (totalSlides === 0) return;              // защита от totalSlides = 0
             if (index < 0) index = totalSlides - 1;
             if (index >= totalSlides) index = 0;
             currentSlide = index;
@@ -943,9 +931,13 @@
         function loadScreenshots() {
             const track = document.getElementById('sliderTrack');
             const dotsContainer = document.getElementById('sliderDots');
-            
-            totalSlides = SCREENSHOTS.length;
+
+            track.innerHTML = '';
             dotsContainer.innerHTML = '';
+            slidesLoaded = 0;
+
+            totalSlides = SCREENSHOTS.length;
+            if (totalSlides === 0) return;
 
             SCREENSHOTS.forEach((src, index) => {
                 const slide = document.createElement('div');
@@ -961,7 +953,7 @@
 
                 const loadImage = async () => {
                     try {
-                        const response = await fetch(src);
+                        const response = await fetch(src, { cache: 'no-store' });
                         if (!response.ok) {
                             throw new Error(`HTTP error! status: ${response.status}`);
                         }
@@ -971,17 +963,19 @@
                         img.src = url;
                         img.className = 'screenshot';
                         img.alt = `screenshot ${index + 1}`;
+                        img.addEventListener('load', () => URL.revokeObjectURL(url), { once: true });
                         slide.replaceWith(img);
                         slidesLoaded++;
-                        if (slidesLoaded === totalSlides) {
-                            goToSlide(0);
-                        }
                     } catch (error) {
                         slide.className = 'screenshot error';
                         slide.textContent = 'error';
+                        slidesLoaded++;
+                    }
+                    if (slidesLoaded === totalSlides) {
+                        goToSlide(0);
                     }
                 };
-                
+
                 loadImage();
             });
 
@@ -989,7 +983,8 @@
             document.getElementById('sliderNext').addEventListener('click', () => goToSlide(currentSlide + 1));
 
             document.addEventListener('keydown', (e) => {
-                if (!document.getElementById('projectsPage').classList.contains('active')) return;
+                const projectsPage = document.getElementById('projectsPage');
+                if (!projectsPage || !projectsPage.classList.contains('active')) return;
                 if (e.key === 'ArrowLeft') goToSlide(currentSlide - 1);
                 if (e.key === 'ArrowRight') goToSlide(currentSlide + 1);
             });
@@ -1013,27 +1008,33 @@
 
         function downloadFile(url, filename) {
             if (!url) {
-                showNotification('error');
+                showNotification('download error', 'error');
                 return;
             }
 
-            showNotification(`done ${filename || 'for'}...`, 'info');
+            showNotification(`downloading ${filename || 'file'}...`, 'info');
 
             const link = document.createElement('a');
             link.href = url;
             link.download = filename || 'download';
             link.target = '_blank';
+            link.rel = 'noopener noreferrer';
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
 
             setTimeout(() => {
-                showNotification(`loading ${filename || 'file'} start`, 'success');
+                showNotification('download started', 'success');
             }, 500);
         }
 
         async function downloadVersion(versionTag) {
-            showNotification(`...`, 'info');
+            if (!versionTag || versionTag === FALLBACK_VERSION) {
+                showNotification('version is not available', 'error');
+                return;
+            }
+
+            showNotification('preparing download...', 'info');
 
             const release = releasesData.find(r => r.tag_name === versionTag);
             if (!release) {
@@ -1047,34 +1048,34 @@
                 : `zombotanic-${versionTag}.zip`;
 
             if (githubUrl) {
-                showNotification(`examination GitHub...`, 'info');
+                showNotification('checking GitHub...', 'info');
                 const githubAvailable = await checkLinkAvailability('https://github.com');
 
                 if (githubAvailable) {
                     downloadFile(githubUrl, filename);
                     return;
                 } else {
-                    showNotification(`GitHub error itch.io...`, 'info');
+                    showNotification('GitHub unavailable, trying itch.io...', 'info');
                 }
             } else {
-                showNotification(`file error: GitHub, examination itch.io...`, 'info');
+                showNotification('no file on GitHub, trying itch.io...', 'info');
             }
 
             const itchAvailable = await checkLinkAvailability(ITCH_URL);
             if (itchAvailable) {
-                showNotification(`downloading from itch io`, 'info');
-                window.open(ITCH_URL, '_blank');
+                showNotification('downloading from itch.io', 'info');
+                window.open(ITCH_URL, '_blank', 'noopener,noreferrer');
                 setTimeout(() => {
-                    showNotification(`open itch.io`, 'success');
+                    showNotification('opened itch.io', 'success');
                 }, 500);
             } else {
-                showNotification(`everyone error`, 'error');
+                showNotification('all download sources are unavailable', 'error');
             }
         }
 
         async function fetchReleasesFromGitHub() {
             try {
-                const response = await fetch(GITHUB_API_URL);
+                const response = await fetch(GITHUB_API_URL, { cache: 'no-store' });
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
@@ -1085,6 +1086,29 @@
             }
         }
 
+        function renderFallbackHistory(versionList) {
+            versionList.innerHTML = FALLBACK_HISTORY.map((v, index) => {
+                const version = v.split(' — ')[0];
+                if (index === 0) {
+                    return `<div class="version-item now" data-version="${version}">${v} (now)</div>`;
+                }
+                return `<div class="version-item" data-version="${version}">${v}</div>`;
+            }).join('');
+
+            bindHistoryItems();
+        }
+
+        function bindHistoryItems() {
+            document.querySelectorAll('.history-page .version-item').forEach(item => {
+                item.addEventListener('click', function () {
+                    const version = this.dataset.version;
+                    if (version) {
+                        downloadVersion(version);
+                    }
+                });
+            });
+        }
+
         async function updateVersionInfo() {
             const versionElement = document.getElementById('currentVersion');
             const versionList = document.getElementById('versionList');
@@ -1093,10 +1117,12 @@
                 const releases = await fetchReleasesFromGitHub();
 
                 if (releases && releases.length > 0) {
-                    releasesData = releases;
-                    const sortedReleases = releases.sort((a, b) =>
+                    // сортировка без мутации исходного массива
+                    const sortedReleases = releases.slice().sort((a, b) =>
                         new Date(b.created_at) - new Date(a.created_at)
                     );
+
+                    releasesData = sortedReleases;
 
                     const latestRelease = sortedReleases[0];
                     currentVersionTag = latestRelease.tag_name || 'unknown';
@@ -1117,57 +1143,21 @@
                     });
 
                     versionList.innerHTML = historyHtml;
-
-                    document.querySelectorAll('.history-page .version-item').forEach(item => {
-                        item.addEventListener('click', function() {
-                            const version = this.dataset.version;
-                            if (version) {
-                                downloadVersion(version);
-                            }
-                        });
-                    });
+                    bindHistoryItems();
 
                 } else {
                     currentVersionTag = FALLBACK_VERSION;
                     versionElement.textContent = FALLBACK_VERSION;
                     versionElement.className = '';
-                    versionList.innerHTML = FALLBACK_HISTORY.map((v, index) => {
-                        const version = v.split(' — ')[0];
-                        if (index === 0) {
-                            return `<div class="version-item now" data-version="${version}">${v} (now)</div>`;
-                        }
-                        return `<div class="version-item" data-version="${version}">${v}</div>`;
-                    }).join('');
-
-                    document.querySelectorAll('.history-page .version-item').forEach(item => {
-                        item.addEventListener('click', function() {
-                            const version = this.dataset.version;
-                            if (version) {
-                                downloadVersion(version);
-                            }
-                        });
-                    });
+                    releasesData = [];
+                    renderFallbackHistory(versionList);
                 }
             } catch (error) {
                 currentVersionTag = FALLBACK_VERSION;
                 versionElement.textContent = FALLBACK_VERSION;
                 versionElement.className = '';
-                versionList.innerHTML = FALLBACK_HISTORY.map((v, index) => {
-                    const version = v.split(' — ')[0];
-                    if (index === 0) {
-                        return `<div class="version-item now" data-version="${version}">${v} (now)</div>`;
-                    }
-                    return `<div class="version-item" data-version="${version}">${v}</div>`;
-                }).join('');
-
-                document.querySelectorAll('.history-page .version-item').forEach(item => {
-                    item.addEventListener('click', function() {
-                        const version = this.dataset.version;
-                        if (version) {
-                            downloadVersion(version);
-                        }
-                    });
-                });
+                releasesData = [];
+                renderFallbackHistory(versionList);
             }
         }
 
@@ -1181,35 +1171,48 @@
             history: document.getElementById('historyPage')
         };
 
-        function showPage(pageId) {
+        // mode: 'push' | 'replace' | 'none'
+        function showPage(pageId, mode = 'push') {
+            if (!pages[pageId]) pageId = 'main';
+
             Object.values(pages).forEach(p => {
                 p.classList.remove('active');
-                p.style.display = 'none';
             });
 
-            const target = pages[pageId];
-            if (target) {
-                target.style.display = 'block';
-                target.classList.add('active');
-                window.history.pushState({ page: pageId }, '', pageId === 'main' ? window.location.pathname : `?page=${pageId}`);
+            pages[pageId].classList.add('active');
+
+            const url = pageId === 'main'
+                ? window.location.pathname
+                : `?page=${pageId}`;
+
+            if (mode === 'push') {
+                window.history.pushState({ page: pageId }, '', url);
+            } else if (mode === 'replace') {
+                window.history.replaceState({ page: pageId }, '', url);
             }
+
+            window.scrollTo({ top: 0, behavior: 'auto' });
         }
 
-        document.getElementById('versionClick').addEventListener('click', function() {
+        document.getElementById('versionClick').addEventListener('click', function () {
+            if (releasesData.length === 0) {
+                showNotification('version list is not loaded yet', 'error');
+                return;
+            }
             if (currentVersionTag) {
                 downloadVersion(currentVersionTag);
             } else {
-                showNotification('Версия ещё не загружена', 'error');
+                showNotification('version is not loaded yet', 'error');
             }
         });
 
-        document.getElementById('historyToggle').addEventListener('click', function(e) {
+        document.getElementById('historyToggle').addEventListener('click', function (e) {
             e.preventDefault();
             showPage('history');
         });
 
         document.querySelectorAll('.bottombar .link[data-page]').forEach(link => {
-            link.addEventListener('click', function(e) {
+            link.addEventListener('click', function (e) {
                 e.preventDefault();
                 const page = this.dataset.page;
                 if (page) {
@@ -1219,33 +1222,30 @@
         });
 
         document.querySelectorAll('.back-link').forEach(link => {
-            link.addEventListener('click', function(e) {
+            link.addEventListener('click', function (e) {
                 e.preventDefault();
                 const page = this.dataset.page || 'main';
                 showPage(page);
             });
         });
 
-        window.addEventListener('popstate', function(event) {
-            const page = event.state ? event.state.page : 'main';
-            showPage(page);
+        window.addEventListener('popstate', function (event) {
+            const page = event.state && event.state.page ? event.state.page : 'main';
+            showPage(page, 'none');   // не пушим новое состояние при навигации назад/вперёд
         });
 
+        // Инициализация
         updateVersionInfo();
         setupLinks();
         setupContactsPage();
         loadScreenshots();
-        //setupItchIframe();
+        setupItchIframe();
         loadBlog();
         loadThoughts();
 
         const urlParams = new URLSearchParams(window.location.search);
         const pageParam = urlParams.get('page');
-        if (pageParam && pages[pageParam]) {
-            showPage(pageParam);
-        } else {
-            showPage('main');
-        }
+        showPage(pageParam && pages[pageParam] ? pageParam : 'main', 'replace');
     </script>
 
 </body>
