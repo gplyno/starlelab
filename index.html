@@ -1156,7 +1156,8 @@
 
                     let historyHtml = '';
                     sortedReleases.forEach((release, index) => {
-                        const date = new Date(release.created_at).toLocaleDateString('ru-RU');
+                        const rawDate = release.published_at || release.created_at;
+                        const date = new Date(rawDate).toLocaleDateString('ru-RU');
                         const version = release.tag_name || 'unknown';
                         const name = release.name && release.name !== release.tag_name ? ` — ${release.name}` : '';
 
