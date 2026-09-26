@@ -4,11 +4,26 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>starlelab</title>
+    <!-- ИКОНКА БРАУЗЕРА -->
+    <link rel="icon" type="image/png" href="starlelabV2.png">
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+        }
+
+        /* УБИРАЕМ ПОЛОСУ ПРОКРУТКИ */
+        html, body {
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;     /* Firefox */
+        }
+        body::-webkit-scrollbar,
+        html::-webkit-scrollbar {
+            display: none;             /* Chrome, Safari, Opera */
+            width: 0;
+            height: 0;
+            background: transparent;
         }
 
         body {
@@ -75,7 +90,6 @@
 
         .main {
             margin-top: 56px;
-            margin-bottom: 160px;
             padding: 40px 30px;
             flex: 1;
         }
@@ -96,9 +110,8 @@
         }
 
         .bottombar {
-            position: fixed;
+            position: sticky;
             bottom: 0;
-            left: 0;
             width: 100%;
             background: #1a1a1a;
             border-top: 1px solid #2a2a2a;
@@ -108,6 +121,7 @@
             gap: 50px;
             flex-wrap: wrap;
             min-height: 100px;
+            margin-top: auto;
         }
 
         .bottombar .column {
@@ -156,7 +170,6 @@
         .page {
             display: none;
             margin-top: 56px;
-            margin-bottom: 160px;
             padding: 40px 30px;
             flex: 1;
         }
@@ -193,6 +206,16 @@
 
         .page .back-link:hover {
             color: #ccc;
+        }
+
+        /* СТИЛИ ДЛЯ КАРТИНКИ В ABOUT US */
+        .about-logo {
+            max-width: 100%;
+            width: 250px; /* Можно увеличить или уменьшить */
+            height: auto;
+            margin-bottom: 24px;
+            display: block;
+            border-radius: 4px; /* Немного скруглим углы, если нужно */
         }
 
         .contacts-list {
@@ -450,7 +473,7 @@
 
         .download-notification {
             position: fixed;
-            bottom: 160px;
+            top: 70px;
             left: 50%;
             transform: translateX(-50%);
             background: #1a1a1a;
@@ -504,7 +527,7 @@
                 font-size: 1.4rem;
             }
             .download-notification {
-                bottom: 150px;
+                top: 70px;
                 font-size: 0.8rem;
                 padding: 10px 16px;
             }
@@ -531,6 +554,9 @@
             }
             .slider-btn.next {
                 right: 4px;
+            }
+            .about-logo {
+                width: 180px; /* Чуть меньше на мобильных */
             }
         }
 
@@ -624,6 +650,8 @@
 
     <section class="page" id="aboutPage">
         <h2>about us</h2>
+        <!-- КАРТИНКА В ABOUT US -->
+        <img src="starlelabV2.png" alt="Starlelab" class="about-logo" />
         <p>
             as we've said, we're a small studio. 
             but we'll strive to create a great game - one that people will want to play for a long time.
@@ -726,7 +754,6 @@
             }, 4000);
         }
 
-        // Проверка доступности (best-effort, no-cors)
         async function checkLinkAvailability(url) {
             try {
                 const controller = new AbortController();
@@ -744,7 +771,6 @@
             }
         }
 
-        // Параллельная проверка списка ссылок
         async function checkLinksParallel(items) {
             return Promise.all(items.map(async (item) => {
                 const available = await checkLinkAvailability(item.url);
@@ -915,7 +941,7 @@
         }
 
         function goToSlide(index) {
-            if (totalSlides === 0) return;              // защита от totalSlides = 0
+            if (totalSlides === 0) return;
             if (index < 0) index = totalSlides - 1;
             if (index >= totalSlides) index = 0;
             currentSlide = index;
@@ -1117,7 +1143,6 @@
                 const releases = await fetchReleasesFromGitHub();
 
                 if (releases && releases.length > 0) {
-                    // сортировка без мутации исходного массива
                     const sortedReleases = releases.slice().sort((a, b) =>
                         new Date(b.created_at) - new Date(a.created_at)
                     );
@@ -1171,7 +1196,6 @@
             history: document.getElementById('historyPage')
         };
 
-        // mode: 'push' | 'replace' | 'none'
         function showPage(pageId, mode = 'push') {
             if (!pages[pageId]) pageId = 'main';
 
@@ -1231,7 +1255,7 @@
 
         window.addEventListener('popstate', function (event) {
             const page = event.state && event.state.page ? event.state.page : 'main';
-            showPage(page, 'none');   // не пушим новое состояние при навигации назад/вперёд
+            showPage(page, 'none');
         });
 
         // Инициализация
