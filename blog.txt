@@ -1,3 +1,6 @@
+03.10.2026
+V1.9.4: Significantly updated the sprites, improved optimization, cleaned up unnecessary code, and added zombie animations.
+
 25.09.2026
 V1.9.3: Textures and sprites have been updated, a smooth transition between map tiles has been added, and the game size has been optimized
 
