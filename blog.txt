@@ -1,25 +1,15 @@
 04.10.2026
 V1.9.5: 
 UI redrawn in pixel style; panels and buttons now match the code size.
-
 Panel titles aligned to the header; inventory cells and slot highlight cleaned up.
-
 Crafting and building menus now show item and building icons.
-
 “stone on stick” is now called “stone mace” (ID unchanged).
-
 Added zombie sounds: growls, screams, attack, death. Music ducks when zombies scream nearby.
-
 Added zombie corpses — they stay for 150 seconds, then fade away.
-
 Added deer: spawn around the player, don’t appear in view, run away when approached. Meat can be butchered and cooked.
-
 Campfire: lit with fuel (R), burns for a limited time. Can cook meat and burn corpses (E). Standing in fire hurts.
-
 Meat restores hunger only, no healing.
-
 Fixed bugs: black screen on pause, deer outside view cone, zombies spawning in walls, being pushed into water, water and shore, kill counter, multiplayer pause, background music, autosave race condition.
-
 Multiplayer doesn’t yet sync crafting, building, attacks, animals, or campfires — planned.
 
 03.10.2026
