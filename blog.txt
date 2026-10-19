@@ -1,3 +1,27 @@
+19.10.2026
+V2.0.0:
+mod support
+Lua scripts
+What can be modded:
+new crafting recipes;
+new weapons;
+new player traits;
+sounds and images
+gameplay
+sandbox
+player traits
+poisoning
+new weapons and crafting recipes
+more items
+world and visuals
+furniture — cabinets, televisions, sofas
+shadows for everything
+weather — fog, rain
+settings and convenience
+FPS settings
+screen resolution settings
+key rebinding
+
 04.10.2026
 V1.9.5: 
 UI redrawn in pixel style; panels and buttons now match the code size.
