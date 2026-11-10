@@ -35,6 +35,7 @@
             flex-direction: column;
         }
 
+        /* ЗОНА 3: ВЕРХНЯЯ ПАНЕЛЬ */
         .topbar {
             position: fixed;
             top: 0;
@@ -50,65 +51,27 @@
             gap: 20px;
         }
 
-        .topbar .version {
-            color: #aaa;
-            font-size: 0.95rem;
-            cursor: pointer;
-            transition: color 0.2s;
+        .topbar .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
-        .topbar .version:hover {
-            color: #fff;
+        .topbar .brand-logo {
+            height: 30px;
+            width: auto;
+            display: block;
+            border-radius: 4px;
         }
 
-        .topbar .version span {
+        .topbar .brand-name {
             color: #e0e0e0;
-            font-weight: 500;
-            border-bottom: 1px dashed #555;
-            padding-bottom: 2px;
-        }
-
-        .topbar .version .loading {
-            color: #666;
-            font-weight: 300;
-            border-bottom: none;
-        }
-
-        .topbar .history-link {
-            color: #777;
-            text-decoration: none;
-            font-size: 0.85rem;
-            cursor: pointer;
-            border-bottom: 1px dashed #444;
-            padding-bottom: 2px;
-            transition: color 0.2s;
-        }
-
-        .topbar .history-link:hover {
-            color: #ccc;
-        }
-
-        .main {
-            margin-top: 56px;
-            padding: 40px 30px;
-            flex: 1;
-        }
-
-        .main h1 {
-            font-size: 2rem;
-            font-weight: 400;
-            letter-spacing: -0.5px;
-            color: #e8e8e8;
-            margin-bottom: 16px;
-        }
-
-        .main p {
-            color: #aaa;
-            line-height: 1.7;
             font-size: 1rem;
-            max-width: 700px;
+            font-weight: 500;
+            letter-spacing: 0.5px;
         }
 
+        /* ЗОНА 2: НИЖНЯЯ ПАНЕЛЬ */
         .bottombar {
             position: sticky;
             bottom: 0;
@@ -151,22 +114,12 @@
             text-align: left;
         }
 
-        .bottombar .link:hover {
-            color: #fff;
-        }
+        .bottombar .link:hover { color: #fff; }
+        .bottombar .link.external { color: #777; }
+        .bottombar .link.external:hover { color: #ccc; }
+        .bottombar .link.unavailable { color: #553333; }
 
-        .bottombar .link.external {
-            color: #777;
-        }
-
-        .bottombar .link.external:hover {
-            color: #ccc;
-        }
-
-        .bottombar .link.unavailable {
-            color: #553333;
-        }
-
+        /* ОБЩИЕ СТИЛИ СТРАНИЦ */
         .page {
             display: none;
             margin-top: 56px;
@@ -174,9 +127,7 @@
             flex: 1;
         }
 
-        .page.active {
-            display: block;
-        }
+        .page.active { display: block; }
 
         .page h2 {
             font-weight: 400;
@@ -204,64 +155,172 @@
             cursor: pointer;
         }
 
-        .page .back-link:hover {
-            color: #ccc;
+        .page .back-link:hover { color: #ccc; }
+
+        .main { margin-top: 56px; padding: 40px 30px; flex: 1; }
+        .main h1 { font-size: 2rem; font-weight: 400; letter-spacing: -0.5px; color: #e8e8e8; margin-bottom: 16px; }
+        .main p { color: #aaa; line-height: 1.7; font-size: 1rem; max-width: 700px; }
+
+        /* ===== ЗОНА 1 И 4: МАКЕТ ПРОЕКТОВ ===== */
+        .projects-layout {
+            display: flex;
+            align-items: flex-start;
+            gap: 40px;
+            max-width: 1200px;
+            width: 100%;
         }
 
-        /* СТИЛИ ДЛЯ КАРТИНКИ В ABOUT US */
-        .about-logo {
-            max-width: 100%;
-            width: 250px; /* Можно увеличить или уменьшить */
-            height: auto;
-            margin-bottom: 24px;
-            display: block;
-            border-radius: 4px; /* Немного скруглим углы, если нужно */
-        }
-
-        .contacts-list {
+        /* ЗОНА 1: МЕНЮ СЛЕВА (САЙДБАР) */
+        .projects-nav {
+            flex: 0 0 180px;
             display: flex;
             flex-direction: column;
             gap: 8px;
-            max-width: 700px;
-            margin-top: 10px;
+            position: sticky;
+            top: 80px;
         }
 
-        .contacts-list .contact-item {
+        .project-nav-item {
+            background: #111;
+            border: 1px solid #2a2a2a;
+            border-radius: 4px;
+            color: #888;
+            font-family: inherit;
+            font-size: 0.95rem;
+            text-align: left;
+            padding: 12px 16px;
+            cursor: pointer;
+            transition: background 0.2s, color 0.2s, border-color 0.2s;
+            width: 100%;
+        }
+
+        .project-nav-item:hover {
+            background: #1a1a1a;
+            color: #ccc;
+            border-color: #3a3a3a;
+        }
+
+        .project-nav-item.active {
+            background: #1f1f1f;
+            color: #fff;
+            border-left: 3px solid #e0e0e0;
+            padding-left: 13px;
+        }
+
+        /* ЗОНА 4: ОКНО ПРОСМОТРА */
+        .projects-panels {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .project-panel {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .project-panel.active { display: block; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ЗАГОЛОВОК И ОПИСАНИЕ */
+        .project-header {
             display: flex;
             align-items: baseline;
-            gap: 12px;
-            padding: 6px 0;
-            border-bottom: 1px solid #1a1a1a;
+            gap: 16px;
+            flex-wrap: wrap;
+            margin-bottom: 16px;
         }
 
-        .contacts-list .contact-label {
-            color: #666;
+        .project-header h2 { margin-bottom: 0; }
+
+        .history-link {
+            color: #777;
+            text-decoration: none;
             font-size: 0.85rem;
-            min-width: 100px;
+            cursor: pointer;
+            border-bottom: 1px dashed #444;
+            padding-bottom: 2px;
+            transition: color 0.2s;
+            white-space: nowrap;
         }
 
-        .contacts-list .contact-link {
+        .history-link:hover { color: #ccc; }
+
+        .project-description {
+            max-width: 700px;
+            margin: 0 0 24px 0;
+            color: #aaa;
+            line-height: 1.7;
+            font-size: 1rem;
+        }
+
+        .project-description p { margin: 0 0 12px 0; color: #aaa; line-height: 1.7; }
+        .project-description p:last-child { margin-bottom: 0; }
+        .project-description h3 { font-weight: 500; font-size: 1.1rem; color: #ddd; margin: 24px 0 10px 0; }
+        
+        .project-description ul, .project-description ol {
+            margin: 0 0 16px 0;
+            padding-left: 24px;
+        }
+        
+        .project-description li { margin-bottom: 8px; color: #aaa; line-height: 1.7; }
+        .project-description strong { color: #ccc; font-weight: 600; }
+        .project-description em { color: #bbb; }
+
+        .project-description a {
             color: #999;
             text-decoration: none;
-            font-size: 0.95rem;
+            border-bottom: 1px dashed #444;
             transition: color 0.2s;
-            word-break: break-all;
+            word-break: break-word;
+        }
+        
+        .project-description a:hover { color: #fff; }
+
+        .project-description code {
+            background: #1a1a1a;
+            border: 1px solid #2a2a2a;
+            border-radius: 3px;
+            padding: 2px 6px;
+            font-size: 0.9em;
+            color: #ccc;
+            font-family: Consolas, Monaco, monospace;
         }
 
-        .contacts-list .contact-link:hover {
-            color: #fff;
+        .project-description blockquote {
+            margin: 0 0 16px 0;
+            padding: 10px 0 10px 16px;
+            border-left: 2px solid #555;
+            color: #999;
+            background: #111;
+            border-radius: 0 4px 4px 0;
         }
 
-        .contacts-list .contact-link.unavailable {
-            color: #553333;
+        .project-description .badges { margin: 0 0 16px 0; display: flex; flex-wrap: wrap; gap: 8px; }
+        .project-description .badges img { height: 28px; width: auto; display: block; }
+
+        .project-description .desc-image {
+            display: block;
+            max-width: 100%;
+            height: auto;
+            margin: 16px 0;
+            border: 1px solid #2a2a2a;
+            background: #111;
+            border-radius: 4px;
         }
 
-        .contacts-list .contact-info {
+        .project-description .desc-footer {
             color: #555;
-            font-size: 0.8rem;
-            margin-left: 4px;
+            font-size: 0.85rem;
+            margin-top: 24px;
+            border-top: 1px solid #1a1a1a;
+            padding-top: 16px;
         }
 
+        /* ===== СЛАЙДЕР ===== */
         .slider-container {
             position: relative;
             max-width: 700px;
@@ -269,12 +328,10 @@
             overflow: hidden;
             border: 1px solid #2a2a2a;
             background: #111;
+            border-radius: 4px;
         }
 
-        .slider-track {
-            display: flex;
-            transition: transform 0.3s ease;
-        }
+        .slider-track { display: flex; transition: transform 0.3s ease; }
 
         .slider-track .screenshot {
             width: 100%;
@@ -284,26 +341,18 @@
             background: #111;
         }
 
-        .slider-track .screenshot.loading {
-            min-height: 300px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #555;
-            font-size: 0.9rem;
-            background: #1a1a1a;
-        }
-
+        .slider-track .screenshot.loading,
         .slider-track .screenshot.error {
             min-height: 300px;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: #553333;
             font-size: 0.9rem;
             background: #1a1a1a;
-            border-color: #553333;
         }
+        
+        .slider-track .screenshot.loading { color: #555; }
+        .slider-track .screenshot.error { color: #553333; border: 1px solid #553333; }
 
         .slider-btn {
             position: absolute;
@@ -325,25 +374,11 @@
             user-select: none;
         }
 
-        .slider-btn:hover {
-            background: #2a2a2a;
-            color: #fff;
-        }
+        .slider-btn:hover { background: #2a2a2a; color: #fff; }
+        .slider-btn.prev { left: 8px; }
+        .slider-btn.next { right: 8px; }
 
-        .slider-btn.prev {
-            left: 8px;
-        }
-
-        .slider-btn.next {
-            right: 8px;
-        }
-
-        .slider-dots {
-            display: flex;
-            justify-content: center;
-            gap: 8px;
-            padding: 12px 0 8px 0;
-        }
+        .slider-dots { display: flex; justify-content: center; gap: 8px; padding: 12px 0 8px 0; }
 
         .slider-dots .dot {
             width: 8px;
@@ -356,52 +391,42 @@
             padding: 0;
         }
 
-        .slider-dots .dot.active {
-            background: #888;
-        }
+        .slider-dots .dot.active { background: #888; }
+        .slider-dots .dot:hover { background: #555; }
 
-        .slider-dots .dot:hover {
-            background: #555;
-        }
-
-        .projects-iframe {
-            margin: 8px 0 12px 0;
-            max-width: 700px;
-            position: relative;
-        }
-
+        /* ===== ССЫЛКИ, КНОПКИ И ITCH.IO ===== */
+        .projects-iframe { margin: 8px 0 12px 0; max-width: 700px; position: relative; }
+        
         .projects-iframe iframe {
             max-width: 100%;
             border: 1px solid #2a2a2a;
             background: #111;
             display: block;
+            border-radius: 4px;
         }
 
         .projects-iframe .iframe-info {
             display: none;
-            padding: 16px 0;
+            padding: 24px;
             color: #666;
             font-size: 0.95rem;
             text-align: center;
+            background: #1a1a1a;
+            border: 1px solid #2a2a2a;
+            border-radius: 4px;
         }
 
-        .projects-iframe .iframe-info.show {
-            display: block;
-        }
+        .projects-iframe .iframe-info.show { display: block; }
 
         .projects-media-row {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 16px;
             flex-wrap: wrap;
-            margin: 8px 0 12px 0;
+            margin: 8px 0 16px 0;
         }
 
-        .projects-media-row .projects-iframe {
-            margin: 0;
-            max-width: 552px;
-            flex: 0 1 auto;
-        }
+        .projects-media-row .projects-iframe { margin: 0; max-width: 552px; flex: 0 1 auto; }
 
         .github-download-btn {
             display: flex;
@@ -420,24 +445,12 @@
             cursor: pointer;
             text-align: center;
             white-space: nowrap;
+            text-decoration: none;
             transition: background 0.2s, color 0.2s, border-color 0.2s;
         }
 
-        .github-download-btn:hover {
-            background: #2a2a2a;
-            border-color: #3a3a3a;
-            color: #fff;
-        }
-
-        .github-download-btn:active {
-            background: #333;
-        }
-
-        .github-download-btn .gh-icon {
-            width: 20px;
-            height: 20px;
-            fill: currentColor;
-        }
+        .github-download-btn:hover { background: #2a2a2a; border-color: #3a3a3a; color: #fff; }
+        .github-download-btn .gh-icon { width: 20px; height: 20px; fill: currentColor; }
 
         .projects-mirror {
             display: block;
@@ -448,14 +461,52 @@
             margin-top: 4px;
         }
 
-        .projects-mirror:hover {
-            color: #999;
+        .projects-mirror:hover { color: #999; }
+
+        /* ===== БЛОГ ===== */
+        .blog-selector { display: flex; gap: 12px; flex-wrap: wrap; max-width: 700px; margin: 8px 0 8px 0; }
+
+        .blog-choice {
+            flex: 1 1 240px;
+            background: #1a1a1a;
+            border: 1px solid #2a2a2a;
+            border-radius: 4px;
+            padding: 18px 20px;
+            color: #aaa;
+            font-family: inherit;
+            font-size: 1rem;
+            text-align: left;
+            cursor: pointer;
+            transition: background 0.2s, color 0.2s, border-color 0.2s;
         }
 
-        .blog-content, .thoughts-content {
+        .blog-choice:hover { background: #2a2a2a; border-color: #3a3a3a; color: #fff; }
+        .blog-choice .blog-choice-sub { display: block; color: #555; font-size: 0.8rem; margin-top: 6px; }
+
+        .blog-view .blog-header {
+            display: flex;
+            align-items: baseline;
+            gap: 16px;
+            flex-wrap: wrap;
+            margin-bottom: 8px;
             max-width: 700px;
-            margin-top: 10px;
         }
+
+        .blog-view .blog-header h3 { font-weight: 400; font-size: 1.25rem; color: #e0e0e0; }
+
+        .blog-back {
+            color: #777;
+            font-size: 0.85rem;
+            cursor: pointer;
+            border-bottom: 1px dashed #444;
+            padding-bottom: 2px;
+            transition: color 0.2s;
+            white-space: nowrap;
+        }
+
+        .blog-back:hover { color: #ccc; }
+
+        .blog-content, .thoughts-content { max-width: 700px; margin-top: 10px; }
 
         .blog-content .blog-entry,
         .thoughts-content .thoughts-entry {
@@ -464,41 +515,21 @@
         }
 
         .blog-content .blog-entry:last-child,
-        .thoughts-content .thoughts-entry:last-child {
-            border-bottom: none;
-        }
+        .thoughts-content .thoughts-entry:last-child { border-bottom: none; }
 
         .blog-content .blog-entry .blog-date,
-        .thoughts-content .thoughts-entry .thoughts-date {
-            color: #555;
-            font-size: 0.8rem;
-            margin-bottom: 4px;
-        }
+        .thoughts-content .thoughts-entry .thoughts-date { color: #555; font-size: 0.8rem; margin-bottom: 6px; }
 
         .blog-content .blog-entry .blog-text,
-        .thoughts-content .thoughts-entry .thoughts-text {
-            color: #aaa;
-            line-height: 1.7;
-            font-size: 1rem;
-            white-space: pre-wrap;
-        }
+        .thoughts-content .thoughts-entry .thoughts-text { color: #aaa; line-height: 1.7; font-size: 1rem; white-space: pre-wrap; }
 
-        .blog-content .blog-empty,
-        .thoughts-content .thoughts-empty {
-            color: #555;
-            font-size: 1rem;
-            text-align: center;
-            padding: 40px 0;
-        }
+        .blog-content .blog-empty, .thoughts-content .thoughts-empty,
+        .blog-content .blog-error, .thoughts-content .thoughts-error { font-size: 0.95rem; text-align: center; padding: 40px 0; }
 
-        .blog-content .blog-error,
-        .thoughts-content .thoughts-error {
-            color: #aa5555;
-            font-size: 0.95rem;
-            text-align: center;
-            padding: 40px 0;
-        }
+        .blog-content .blog-empty, .thoughts-content .thoughts-empty { color: #555; }
+        .blog-content .blog-error, .thoughts-content .thoughts-error { color: #aa5555; }
 
+        /* ===== ИСТОРИЯ ВЕРСИЙ ===== */
         .history-page .version-item {
             color: #aaa;
             padding: 12px 0;
@@ -508,19 +539,11 @@
             transition: color 0.2s;
         }
 
-        .history-page .version-item:hover {
-            color: #fff;
-        }
+        .history-page .version-item:hover { color: #fff; }
+        .history-page .version-item:last-child { border-bottom: none; }
+        .history-page .version-item.now { color: #e0e0e0; font-weight: 500; }
 
-        .history-page .version-item:last-child {
-            border-bottom: none;
-        }
-
-        .history-page .version-item.now {
-            color: #e0e0e0;
-            font-weight: 500;
-        }
-
+        /* ===== УВЕДОМЛЕНИЯ ===== */
         .download-notification {
             position: fixed;
             top: 70px;
@@ -536,114 +559,92 @@
             display: none;
             max-width: 90%;
             text-align: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.5);
         }
 
-        .download-notification.active {
-            display: block;
-        }
+        .download-notification.active { display: block; }
+        .download-notification .error { color: #aa5555; }
+        .download-notification .success { color: #55aa55; }
 
-        .download-notification .error {
-            color: #aa5555;
-        }
+        /* ===== СТРАНИЦА ABOUT И КОНТАКТЫ ===== */
+        .about-logo { max-width: 100%; width: 250px; height: auto; margin-bottom: 24px; display: block; border-radius: 4px; }
 
-        .download-notification .success {
-            color: #55aa55;
-        }
+        .contacts-list { display: flex; flex-direction: column; gap: 8px; max-width: 700px; margin-top: 10px; }
+        .contacts-list .contact-item { display: flex; align-items: baseline; gap: 12px; padding: 8px 0; border-bottom: 1px solid #1a1a1a; }
+        .contacts-list .contact-label { color: #666; font-size: 0.85rem; min-width: 100px; }
+        .contacts-list .contact-link { color: #999; text-decoration: none; font-size: 0.95rem; transition: color 0.2s; word-break: break-all; }
+        .contacts-list .contact-link:hover { color: #fff; }
+        .contacts-list .contact-link.unavailable { color: #553333; }
+        .contacts-list .contact-info { color: #555; font-size: 0.8rem; margin-left: 4px; }
 
+        /* ===== АДАПТИВНОСТЬ ===== */
         @media (max-width: 700px) {
-            .bottombar {
-                gap: 30px;
-                padding: 16px 20px;
-                min-height: 140px;
-                flex-wrap: wrap;
-            }
-            .bottombar .link {
-                font-size: 0.85rem;
-            }
-            .main h1 {
-                font-size: 1.5rem;
-            }
-            .topbar {
-                padding: 0 20px;
-                gap: 12px;
-                flex-wrap: wrap;
-                height: auto;
-                min-height: 56px;
-            }
-            .topbar .version {
-                font-size: 0.85rem;
-            }
-            .page h2 {
-                font-size: 1.4rem;
-            }
-            .download-notification {
-                top: 70px;
-                font-size: 0.8rem;
-                padding: 10px 16px;
-            }
-            .contacts-list .contact-item {
+            .bottombar { gap: 30px; padding: 16px 20px; min-height: 140px; flex-wrap: wrap; }
+            .bottombar .link { font-size: 0.85rem; }
+            .main h1 { font-size: 1.5rem; }
+            .topbar { padding: 0 20px; gap: 12px; flex-wrap: wrap; height: auto; min-height: 56px; }
+            .topbar .brand-name { font-size: 0.9rem; }
+            .page h2 { font-size: 1.4rem; }
+            .download-notification { top: 70px; font-size: 0.8rem; padding: 10px 16px; }
+            .contacts-list .contact-item { flex-direction: column; gap: 2px; padding: 8px 0; }
+            .contacts-list .contact-label { min-width: auto; font-size: 0.75rem; }
+            
+            .projects-iframe iframe { width: 100% !important; height: auto !important; }
+            .projects-media-row { flex-direction: column; align-items: stretch; }
+            .projects-media-row .projects-iframe { max-width: 100%; }
+            .github-download-btn { flex-direction: row; width: 100%; min-height: 48px; white-space: normal; }
+            
+            .slider-btn { width: 32px; height: 32px; font-size: 1rem; }
+            .slider-btn.prev { left: 4px; }
+            .slider-btn.next { right: 4px; }
+            
+            .about-logo { width: 180px; }
+            .blog-selector { flex-direction: column; }
+            .blog-choice { flex: 1 1 auto; width: 100%; }
+        }
+
+        /* На узких экранах (телефоны) меню проектов превращается в удобные кнопки сверху */
+        @media (max-width: 600px) {
+            .projects-layout {
                 flex-direction: column;
-                gap: 2px;
-                padding: 8px 0;
+                gap: 20px;
             }
-            .contacts-list .contact-label {
-                min-width: auto;
-                font-size: 0.75rem;
-            }
-            .projects-iframe iframe {
-                width: 100% !important;
-                height: auto !important;
-            }
-            .projects-media-row {
-                flex-direction: column;
-                align-items: stretch;
-            }
-            .projects-media-row .projects-iframe {
-                max-width: 100%;
-            }
-            .github-download-btn {
-                flex-direction: row;
+            .projects-nav {
+                position: static;
                 width: 100%;
-                min-height: 48px;
-                white-space: normal;
+                flex: none;
+                flex-direction: row;
+                flex-wrap: wrap;
+                gap: 10px;
             }
-            .slider-btn {
-                width: 32px;
-                height: 32px;
-                font-size: 1rem;
+            .project-nav-item {
+                flex: 1 1 auto;
+                text-align: center;
+                border-left: 1px solid #2a2a2a;
+                padding-left: 16px;
             }
-            .slider-btn.prev {
-                left: 4px;
-            }
-            .slider-btn.next {
-                right: 4px;
-            }
-            .about-logo {
-                width: 180px; /* Чуть меньше на мобильных */
+            .project-nav-item.active {
+                border-left: 1px solid #2a2a2a;
+                border-bottom: 3px solid #e0e0e0;
+                padding-left: 16px;
             }
         }
 
         @media (max-width: 450px) {
-            .bottombar {
-                gap: 20px;
-                padding: 12px 16px;
-            }
-            .bottombar .column {
-                min-width: 80px;
-            }
-            .bottombar .column-title {
-                font-size: 0.6rem;
-            }
+            .bottombar { gap: 20px; padding: 12px 16px; }
+            .bottombar .column { min-width: 80px; }
+            .bottombar .column-title { font-size: 0.6rem; }
         }
     </style>
 </head>
 <body>
 
+    <!-- ЗОНА 3: ВЕРХНЯЯ ПАНЕЛЬ -->
     <header class="topbar">
-        <div class="version" id="versionClick">
-            version: <span id="currentVersion"><span class="loading">loading...</span></span>
+        <div class="brand">
+            <img src="starlelabV2.png" alt="starlelab" class="brand-logo" />
+            <span class="brand-name">starlelab</span>
         </div>
-        <a class="history-link" id="historyToggle">version history</a>
     </header>
 
     <div class="download-notification" id="notification">
@@ -661,53 +662,221 @@
     </section>
 
     <section class="page" id="projectsPage">
-        <h2>zombotanic</h2>
+        <div class="projects-layout">
 
-        <div class="slider-container" id="sliderContainer">
-            <div class="slider-track" id="sliderTrack"></div>
-            <button class="slider-btn prev" id="sliderPrev" aria-label="назад">‹</button>
-            <button class="slider-btn next" id="sliderNext" aria-label="вперёд">›</button>
-            <div class="slider-dots" id="sliderDots"></div>
-        </div>
+            <!-- ЗОНА 1: МЕНЮ ВЫБОРА ПРОЕКТОВ (СЛЕВА) -->
+            <nav class="projects-nav" id="projectsNav" aria-label="projects">
+                <button class="project-nav-item active" data-project="zombotanic" type="button">zombotanic</button>
+                <button class="project-nav-item" data-project="soundhub" type="button">soundhub</button>
+            </nav>
 
-        <div class="projects-media-row">
-            <div class="projects-iframe" id="itchContainer">
-                <iframe
-                    id="itchFrame"
-                    title="zombotanic on itch.io"
-                    frameborder="0"
-                    src="https://itch.io/embed/4666491?linkback=true&amp;bg_color=121212&amp;fg_color=ffffff&amp;link_color=e53b44&amp;border_color=535353"
-                    width="552"
-                    height="167"
-                ><a href="https://starlelab.itch.io/zombotanic">zombotanic by starlelab</a></iframe>
-                <div class="iframe-info" id="itchInfo">itch.io widget is temporarily unavailable</div>
+            <!-- ЗОНА 4: ОКНО ПРОСМОТРА ПРОЕКТА (СПРАВА) -->
+            <div class="projects-panels">
+
+                <!-- ПРОЕКТ: ZOMBOTANIC -->
+                <div class="project-panel active" data-project="zombotanic" id="panelZombotanic">
+                    <div class="project-header">
+                        <h2>zombotanic</h2>
+                        <a class="history-link" id="historyToggle">version history</a>
+                    </div>
+
+                    <div class="project-description">
+                        <p>Zombotanic is a survival RPG set in a world where nature has become corrupted.</p>
+                        <p>Explore a dangerous world, gather resources, build your shelter, and fight against the growing zombie infection.</p>
+                        <p>Combine different playstyles with RPG progression, roguelike elements, and survival mechanics. Every journey is different, and every decision can determine how long you survive.</p>
+                        <p>The game is currently in early development, but there is much more to come. We are actively improving Zombotanic and listening to player feedback.</p>
+                    </div>
+
+                    <div class="slider-container" id="sliderContainer">
+                        <div class="slider-track" id="sliderTrack"></div>
+                        <button class="slider-btn prev" id="sliderPrev" aria-label="назад">‹</button>
+                        <button class="slider-btn next" id="sliderNext" aria-label="вперёд">›</button>
+                        <div class="slider-dots" id="sliderDots"></div>
+                    </div>
+
+                    <div class="projects-media-row">
+                        <div class="projects-iframe">
+                            <iframe
+                                id="zombotanicItchFrame"
+                                title="zombotanic on itch.io"
+                                frameborder="0"
+                                src="https://itch.io/embed/4666491?linkback=true&amp;bg_color=121212&amp;fg_color=ffffff&amp;link_color=e53b44&amp;border_color=535353"
+                                width="552"
+                                height="167"
+                            ><a href="https://starlelab.itch.io/zombotanic">zombotanic by starlelab</a></iframe>
+                            <div class="iframe-info" id="zombotanicItchInfo">itch.io widget is temporarily unavailable</div>
+                        </div>
+
+                        <button
+                            class="github-download-btn"
+                            id="githubDownloadBtn"
+                            type="button"
+                            title="Скачать последний релиз с GitHub"
+                        >
+                            <svg class="gh-icon" viewBox="0 0 16 16" aria-hidden="true">
+                                <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/>
+                            </svg>
+                            <span id="githubDownloadLabel">github download</span>
+                        </button>
+                    </div>
+
+                    <a href="https://starlelab.itch.io/zombotanic" target="_blank" rel="noopener noreferrer" class="projects-mirror">
+                        itch io
+                    </a>
+                </div>
+
+                <!-- ПРОЕКТ: SOUNDHUB -->
+                <div class="project-panel" data-project="soundhub" id="panelSoundhub">
+                    <div class="project-header">
+                        <h2>soundhub</h2>
+                    </div>
+
+                    <div class="project-description">
+                        <p><strong>A free local music player built with Qt 6.</strong></p>
+
+                        <div class="badges">
+                            <img src="https://img.shields.io/badge/Qt-6-41CD52?style=for-the-badge&amp;logo=qt&amp;logoColor=white" alt="Qt 6">
+                            <img src="https://img.shields.io/badge/C%2B%2B-17-00599C?style=for-the-badge&amp;logo=c%2B%2B&amp;logoColor=white" alt="C++ 17">
+                            <img src="https://img.shields.io/badge/License-MIT-blue?style=for-the-badge" alt="MIT License">
+                        </div>
+
+                        <p>
+                            SoundHub is a lightweight desktop application for listening to your local music collection.
+                            The interface is intentionally simple and focused on essential playback controls.
+                        </p>
+
+                        <h3>Screenshots</h3>
+                        <img
+                            class="desc-image"
+                            src="https://raw.githubusercontent.com/gplyno/soundhub/main/image/screenshot.png"
+                            alt="SoundHub Interface"
+                            loading="lazy"
+                            onerror="this.onerror=null;this.src='https://raw.githubusercontent.com/gplyno/soundhub/main/images/screenshot.png';"
+                        >
+
+                        <h3>Why SoundHub?</h3>
+                        <p>
+                            You might notice that the interface is inspired by modern streaming services like Spotify.
+                            We believe that a familiar UI is an intuitive UI. However, SoundHub was built to solve a
+                            different set of problems:
+                        </p>
+                        <ul>
+                            <li><strong>No Subscriptions:</strong> Your music, your rules. No monthly fees, no premium tiers.</li>
+                            <li><strong>100% Offline:</strong> No internet connection required. Listen to your local files anytime, anywhere.</li>
+                            <li><strong>No Bloatware:</strong> Modern music apps are overloaded with podcasts, audiobooks, social features, and endless menus. SoundHub keeps it simple.</li>
+                            <li><strong>Zero Algorithms:</strong> No "Recommended for you", no forced playlists. Just your library.</li>
+                            <li><strong>Intent-Based Listening:</strong> Open the app, search for the track you want to hear <em>right now</em>, and play it.</li>
+                            <li><strong>Lightning Fast:</strong> Built with C++ and Qt 6, the app launches instantly and runs smoothly.</li>
+                        </ul>
+
+                        <h3>Features</h3>
+                        <ul>
+                            <li>Pause and resume playback</li>
+                            <li>Previous and next track</li>
+                            <li>Repeat the current track</li>
+                            <li>Play a random track (shuffle)</li>
+                            <li>Track search</li>
+                            <li>Volume control</li>
+                            <li>Dark UI theme</li>
+                        </ul>
+
+                        <h3>How to Add Music</h3>
+                        <ol>
+                            <li>Locate the application executable (<code>.exe</code>).</li>
+                            <li>In the same folder as the <code>.exe</code>, find the <code>music</code> folder.</li>
+                            <li>Place your <code>.mp3</code> files or other supported audio files into that folder.</li>
+                        </ol>
+
+                        <h3>Important</h3>
+                        <blockquote>
+                            <strong>SoundHub does not distribute music.</strong>
+                            You must download your own music files.
+                        </blockquote>
+
+                        <h3>License</h3>
+                        <p>
+                            This project is licensed under the MIT License. See the
+                            <a href="https://github.com/gplyno/soundhub/blob/main/LICENSE" target="_blank" rel="noopener noreferrer">LICENSE</a>
+                            file for details.
+                        </p>
+
+                        <h3>Credits</h3>
+                        <p>
+                            SoundHub was developed by <strong>starlelab</strong> in <strong>2026</strong>.<br>
+                            Website: <a href="https://gplyno.github.io/starlelab/" target="_blank" rel="noopener noreferrer">https://gplyno.github.io/starlelab/</a><br>
+                            GitHub: <a href="https://github.com/gplyno/soundhub" target="_blank" rel="noopener noreferrer">https://github.com/gplyno/soundhub</a>
+                        </p>
+
+                        <p class="desc-footer">&copy; 2026 starlelab · SoundHub</p>
+                    </div>
+
+                    <div class="slider-container" id="sliderContainer2">
+                        <div class="slider-track" id="sliderTrack2"></div>
+                        <button class="slider-btn prev" id="sliderPrev2" aria-label="назад">‹</button>
+                        <button class="slider-btn next" id="sliderNext2" aria-label="вперёд">›</button>
+                        <div class="slider-dots" id="sliderDots2"></div>
+                    </div>
+
+                    <div class="projects-media-row">
+                        <div class="projects-iframe">
+                            <iframe
+                                id="soundhubItchFrame"
+                                title="soundhub on itch.io"
+                                frameborder="0"
+                                src="https://itch.io/embed/5323551?linkback=true&amp;border_width=2&amp;bg_color=121212&amp;fg_color=1ed760&amp;link_color=1ed760&amp;border_color=1ed760"
+                                width="554"
+                                height="169"
+                            ><a href="https://starlelab.itch.io/soundhub">SoundHub by starlelab</a></iframe>
+                            <div class="iframe-info" id="soundhubItchInfo">itch.io widget is temporarily unavailable</div>
+                        </div>
+
+                        <a
+                            class="github-download-btn"
+                            href="https://github.com/gplyno/soundhub"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            title="Открыть репозиторий SoundHub на GitHub"
+                        >
+                            <svg class="gh-icon" viewBox="0 0 16 16" aria-hidden="true">
+                                <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/>
+                            </svg>
+                            <span>github</span>
+                        </a>
+                    </div>
+
+                    <a href="https://starlelab.itch.io/soundhub" target="_blank" rel="noopener noreferrer" class="projects-mirror">
+                        itch io
+                    </a>
+                </div>
+
             </div>
-
-            <button
-                class="github-download-btn"
-                id="githubDownloadBtn"
-                type="button"
-                title="Скачать последний релиз с GitHub"
-            >
-                <svg class="gh-icon" viewBox="0 0 16 16" aria-hidden="true">
-                    <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/>
-                </svg>
-                <span id="githubDownloadLabel">github download</span>
-            </button>
         </div>
-
-        <a href="https://starlelab.itch.io/zombotanic" target="_blank" rel="noopener noreferrer" class="projects-mirror">
-            itch io
-        </a>
 
         <a class="back-link" data-page="main">← back</a>
     </section>
 
     <section class="page" id="blogPage">
         <h2>blog</h2>
-        <div class="blog-content" id="blogContent">
-            <div class="blog-empty">loading...</div>
+
+        <div class="blog-selector" id="blogSelector">
+            <button class="blog-choice" data-blog="zb" type="button">
+                zombotanic blog
+                <span class="blog-choice-sub">news and dev updates about zombotanic</span>
+            </button>
+            <button class="blog-choice" data-blog="sh" type="button">
+                soundhub blog
+                <span class="blog-choice-sub">news and dev updates about soundhub</span>
+            </button>
         </div>
+
+        <div class="blog-view" id="blogView" style="display: none;">
+            <div class="blog-header">
+                <h3 id="blogViewTitle"></h3>
+                <a class="blog-back" id="blogBack">← choose another blog</a>
+            </div>
+            <div class="blog-content" id="blogContent"></div>
+        </div>
+
         <a class="back-link" data-page="main">← back</a>
     </section>
 
@@ -727,7 +896,6 @@
 
     <section class="page" id="aboutPage">
         <h2>about us</h2>
-        <!-- КАРТИНКА В ABOUT US -->
         <img src="starlelabV2.png" alt="Starlelab" class="about-logo" />
         <p>
             as we've said, we're a small studio. 
@@ -744,6 +912,7 @@
         <a class="back-link" data-page="main">← back</a>
     </section>
 
+    <!-- ЗОНА 2: НИЖНЯЯ ПАНЕЛЬ -->
     <footer class="bottombar">
         <div class="column">
             <div class="column-title">navigation</div>
@@ -775,8 +944,17 @@
         const GITHUB_API_URL = 'https://api.github.com/repos/gplyno/zombotanic/releases';
         const ITCH_URL = 'https://starlelab.itch.io/zombotanic';
         const GITHUB_REPO_URL = 'https://github.com/gplyno';
-        const BLOG_FILE_URL = 'https://raw.githubusercontent.com/gplyno/starlelab/main/blog.txt';
         const THOUGHTS_FILE_URL = 'https://raw.githubusercontent.com/gplyno/starlelab/main/thoughts.txt';
+
+        const BLOG_FILES = {
+            zb: 'https://raw.githubusercontent.com/gplyno/starlelab/main/zb_blog.txt',
+            sh: 'https://raw.githubusercontent.com/gplyno/starlelab/main/sh_blog.txt'
+        };
+
+        const BLOG_TITLES = {
+            zb: 'zombotanic blog',
+            sh: 'soundhub blog'
+        };
 
         const MAP_LINKS = [
             'https://gplyno.github.io/zombotanic_map/',
@@ -808,16 +986,28 @@
             'images/screenshot3.png'
         ];
 
-        const FALLBACK_VERSION = 'error';
-        const FALLBACK_HISTORY = [
-            'error',
+        const SOUNDHUB_SCREENSHOTS = [
+            [
+                'https://raw.githubusercontent.com/gplyno/soundhub/main/image/screenshot1.png',
+                'https://raw.githubusercontent.com/gplyno/soundhub/main/images/screenshot1.png'
+            ],
+            [
+                'https://raw.githubusercontent.com/gplyno/soundhub/main/image/screenshot2.png',
+                'https://raw.githubusercontent.com/gplyno/soundhub/main/images/screenshot2.png'
+            ],
+            [
+                'https://raw.githubusercontent.com/gplyno/soundhub/main/image/screenshot3.png',
+                'https://raw.githubusercontent.com/gplyno/soundhub/main/images/screenshot3.png'
+            ]
         ];
+
+        const FALLBACK_VERSION = 'error';
+        const FALLBACK_HISTORY = ['error'];
 
         let releasesData = [];
         let currentVersionTag = '';
-        let currentSlide = 0;
-        let totalSlides = 0;
-        let slidesLoaded = 0;
+        let activeSlider = null;
+        let activeBlog = null;
 
         function showNotification(message, type = 'info') {
             const notification = document.getElementById('notification');
@@ -857,11 +1047,7 @@
 
         async function setupLinks() {
             const mapLink = document.getElementById('mapLink');
-
-            const mapResults = await checkLinksParallel(
-                MAP_LINKS.map((url, i) => ({ url, i }))
-            );
-
+            const mapResults = await checkLinksParallel(MAP_LINKS.map((url, i) => ({ url, i })));
             const firstAvailable = mapResults.find(r => r.available);
 
             if (firstAvailable) {
@@ -899,7 +1085,6 @@
 
         async function setupContactsPage() {
             const contactsList = document.getElementById('contactsList');
-
             const results = await checkLinksParallel(CONTACTS_DATA);
 
             const html = results.map((contact) => {
@@ -917,40 +1102,41 @@
             contactsList.innerHTML = html;
         }
 
-        function setupItchIframe() {
-            const iframe = document.getElementById('itchFrame');
-            const infoDiv = document.getElementById('itchInfo');
+        /* ===== УМНАЯ ПРОВЕРКА ДЛЯ ITCH.IO ===== */
+        /* Если блокировщик рекламы или сеть не дают загрузиться фрейму, 
+           он скрывается и вместо него показывается заглушка. */
+        function setupItchIframe(iframeId, infoId) {
+            const iframe = document.getElementById(iframeId);
+            const infoDiv = document.getElementById(infoId);
             if (!iframe || !infoDiv) return;
 
-            let loaded = false;
-            let failed = false;
-
-            const fail = () => {
-                if (failed) return;
-                failed = true;
-                infoDiv.classList.add('show');
-                iframe.style.display = 'none';
-            };
-
-            iframe.addEventListener('load', function () {
-                loaded = true;
-                infoDiv.classList.remove('show');
-            });
-
-            iframe.addEventListener('error', fail);
-
             setTimeout(() => {
-                if (!loaded) fail();
-            }, 8000);
+                try {
+                    // Если мы можем прочитать документ и он пустой, значит iframe заблокирован
+                    const doc = iframe.contentDocument || iframe.contentWindow.document;
+                    if (!doc || doc.body.innerHTML.trim() === '') {
+                        infoDiv.classList.add('show');
+                        iframe.style.display = 'none';
+                    }
+                } catch (err) {
+                    // Если возникает SecurityError, значит кросс-доменный iframe загрузился нормально
+                    if (err.name !== 'SecurityError') {
+                        infoDiv.classList.add('show');
+                        iframe.style.display = 'none';
+                    }
+                }
+            }, 3000); // Проверяем через 3 секунды после загрузки страницы
+        }
+
+        function setupAllItchIframes() {
+            setupItchIframe('zombotanicItchFrame', 'zombotanicItchInfo');
+            setupItchIframe('soundhubItchFrame', 'soundhubItchInfo');
         }
 
         async function loadTextEntries(url, container, emptyText, entryClass, dateClass, textClass, errorClass) {
             try {
                 const response = await fetch(url, { cache: 'no-store' });
-
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
 
                 const text = await response.text();
                 const entries = text.split(/\n\s*\n/).filter(entry => entry.trim().length > 0);
@@ -985,24 +1171,65 @@
                         `;
                     }
                 }
-
                 container.innerHTML = html;
-
             } catch (error) {
                 container.innerHTML = `<div class="${errorClass}">connection error</div>`;
             }
         }
 
-        function loadBlog() {
+        function resetBlogView() {
+            const selector = document.getElementById('blogSelector');
+            const view = document.getElementById('blogView');
+            if (!selector || !view) return;
+            selector.style.display = '';
+            view.style.display = 'none';
+            activeBlog = null;
+        }
+
+        function openBlog(key) {
+            const fileUrl = BLOG_FILES[key];
+            if (!fileUrl) return;
+
+            activeBlog = key;
+
+            const selector = document.getElementById('blogSelector');
+            const view = document.getElementById('blogView');
+            const title = document.getElementById('blogViewTitle');
+            const container = document.getElementById('blogContent');
+
+            selector.style.display = 'none';
+            view.style.display = 'block';
+            title.textContent = BLOG_TITLES[key] || 'blog';
+            container.innerHTML = '<div class="blog-empty">loading...</div>';
+
             loadTextEntries(
-                BLOG_FILE_URL,
-                document.getElementById('blogContent'),
+                fileUrl,
+                container,
                 'blog-empty',
                 'blog-entry',
                 'blog-date',
                 'blog-text',
                 'blog-error'
             );
+
+            window.scrollTo({ top: 0, behavior: 'auto' });
+        }
+
+        function setupBlog() {
+            document.querySelectorAll('.blog-choice').forEach(btn => {
+                btn.addEventListener('click', function () {
+                    const key = this.dataset.blog;
+                    if (key) openBlog(key);
+                });
+            });
+
+            const blogBack = document.getElementById('blogBack');
+            if (blogBack) {
+                blogBack.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    resetBlogView();
+                });
+            }
         }
 
         function loadThoughts() {
@@ -1017,32 +1244,86 @@
             );
         }
 
-        function goToSlide(index) {
-            if (totalSlides === 0) return;
-            if (index < 0) index = totalSlides - 1;
-            if (index >= totalSlides) index = 0;
-            currentSlide = index;
+        /* ===== ПЕРЕКЛЮЧЕНИЕ ПРОЕКТОВ ===== */
+        const projectSliders = {};
 
-            const track = document.getElementById('sliderTrack');
-            track.style.transform = `translateX(-${currentSlide * 100}%)`;
+        function selectProject(key) {
+            const navItems = document.querySelectorAll('.project-nav-item');
+            const panels = document.querySelectorAll('.project-panel');
 
-            document.querySelectorAll('.slider-dots .dot').forEach((dot, i) => {
-                dot.classList.toggle('active', i === currentSlide);
+            let found = false;
+            navItems.forEach(btn => {
+                const isActive = btn.dataset.project === key;
+                btn.classList.toggle('active', isActive);
+                if (isActive) found = true;
+            });
+
+            if (!found) return;
+
+            panels.forEach(panel => {
+                panel.classList.toggle('active', panel.dataset.project === key);
+            });
+
+            activeSlider = projectSliders[key] || null;
+            window.scrollTo({ top: 0, behavior: 'auto' });
+        }
+
+        function setupProjectsNav() {
+            document.querySelectorAll('.project-nav-item').forEach(btn => {
+                btn.addEventListener('click', function () {
+                    selectProject(this.dataset.project);
+                });
             });
         }
 
-        function loadScreenshots() {
-            const track = document.getElementById('sliderTrack');
-            const dotsContainer = document.getElementById('sliderDots');
+        async function fetchFirstAvailable(candidates) {
+            for (const src of candidates) {
+                try {
+                    const response = await fetch(src, { cache: 'no-store' });
+                    if (!response.ok) continue;
+                    const blob = await response.blob();
+                    if (!blob || blob.size === 0) continue;
+                    return blob;
+                } catch (error) {}
+            }
+            return null;
+        }
+
+        function initSlider(config) {
+            const track = document.getElementById(config.trackId);
+            const dotsContainer = document.getElementById(config.dotsId);
+            const prevBtn = document.getElementById(config.prevId);
+            const nextBtn = document.getElementById(config.nextId);
+            const container = document.getElementById(config.containerId);
+
+            if (!track || !dotsContainer || !prevBtn || !nextBtn) return null;
+
+            const screenshots = config.screenshots || [];
+            let currentSlide = 0;
+            let totalSlides = screenshots.length;
+            let slidesLoaded = 0;
+
+            function goToSlide(index) {
+                if (totalSlides === 0) return;
+                if (index < 0) index = totalSlides - 1;
+                if (index >= totalSlides) index = 0;
+                currentSlide = index;
+
+                track.style.transform = `translateX(-${currentSlide * 100}%)`;
+
+                dotsContainer.querySelectorAll('.dot').forEach((dot, i) => {
+                    dot.classList.toggle('active', i === currentSlide);
+                });
+            }
 
             track.innerHTML = '';
             dotsContainer.innerHTML = '';
-            slidesLoaded = 0;
 
-            totalSlides = SCREENSHOTS.length;
-            if (totalSlides === 0) return;
+            if (totalSlides === 0) return null;
 
-            SCREENSHOTS.forEach((src, index) => {
+            screenshots.forEach((entry, index) => {
+                const candidates = Array.isArray(entry) ? entry : [entry];
+
                 const slide = document.createElement('div');
                 slide.className = 'screenshot loading';
                 slide.textContent = 'loading...';
@@ -1056,11 +1337,9 @@
 
                 const loadImage = async () => {
                     try {
-                        const response = await fetch(src, { cache: 'no-store' });
-                        if (!response.ok) {
-                            throw new Error(`HTTP error! status: ${response.status}`);
-                        }
-                        const blob = await response.blob();
+                        const blob = await fetchFirstAvailable(candidates);
+                        if (!blob) throw new Error('no image');
+                        
                         const url = URL.createObjectURL(blob);
                         const img = document.createElement('img');
                         img.src = url;
@@ -1082,28 +1361,28 @@
                 loadImage();
             });
 
-            document.getElementById('sliderPrev').addEventListener('click', () => goToSlide(currentSlide - 1));
-            document.getElementById('sliderNext').addEventListener('click', () => goToSlide(currentSlide + 1));
+            prevBtn.addEventListener('click', () => goToSlide(currentSlide - 1));
+            nextBtn.addEventListener('click', () => goToSlide(currentSlide + 1));
 
-            document.addEventListener('keydown', (e) => {
-                const projectsPage = document.getElementById('projectsPage');
-                if (!projectsPage || !projectsPage.classList.contains('active')) return;
-                if (e.key === 'ArrowLeft') goToSlide(currentSlide - 1);
-                if (e.key === 'ArrowRight') goToSlide(currentSlide + 1);
-            });
+            const api = {
+                goToSlide,
+                get currentSlide() { return currentSlide; },
+                get totalSlides() { return totalSlides; }
+            };
+
+            if (container) {
+                container.addEventListener('mouseenter', () => { activeSlider = api; });
+            }
+
+            return api;
         }
 
         function getGitHubDownloadUrl(release) {
             if (release && release.assets && release.assets.length > 0) {
                 const asset = release.assets.find(a =>
-                    a.name.endsWith('.zip') ||
-                    a.name.endsWith('.exe') ||
-                    a.name.endsWith('.apk') ||
-                    a.name.endsWith('.dmg')
+                    a.name.endsWith('.zip') || a.name.endsWith('.exe') || a.name.endsWith('.apk') || a.name.endsWith('.dmg')
                 );
-                if (asset) {
-                    return asset.browser_download_url;
-                }
+                if (asset) return asset.browser_download_url;
                 return release.assets[0].browser_download_url;
             }
             return null;
@@ -1114,9 +1393,7 @@
                 showNotification('download error', 'error');
                 return;
             }
-
             showNotification(`downloading ${filename || 'file'}...`, 'info');
-
             const link = document.createElement('a');
             link.href = url;
             link.download = filename || 'download';
@@ -1125,10 +1402,7 @@
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
-
-            setTimeout(() => {
-                showNotification('download started', 'success');
-            }, 500);
+            setTimeout(() => showNotification('download started', 'success'), 500);
         }
 
         async function downloadVersion(versionTag) {
@@ -1136,7 +1410,6 @@
                 showNotification('version is not available', 'error');
                 return;
             }
-
             showNotification('preparing download...', 'info');
 
             const release = releasesData.find(r => r.tag_name === versionTag);
@@ -1146,14 +1419,11 @@
             }
 
             const githubUrl = getGitHubDownloadUrl(release);
-            const filename = release.assets && release.assets.length > 0
-                ? release.assets[0].name
-                : `zombotanic-${versionTag}.zip`;
+            const filename = release.assets && release.assets.length > 0 ? release.assets[0].name : `zombotanic-${versionTag}.zip`;
 
             if (githubUrl) {
                 showNotification('checking GitHub...', 'info');
                 const githubAvailable = await checkLinkAvailability('https://github.com');
-
                 if (githubAvailable) {
                     downloadFile(githubUrl, filename);
                     return;
@@ -1168,9 +1438,7 @@
             if (itchAvailable) {
                 showNotification('downloading from itch.io', 'info');
                 window.open(ITCH_URL, '_blank', 'noopener,noreferrer');
-                setTimeout(() => {
-                    showNotification('opened itch.io', 'success');
-                }, 500);
+                setTimeout(() => showNotification('opened itch.io', 'success'), 500);
             } else {
                 showNotification('all download sources are unavailable', 'error');
             }
@@ -1178,9 +1446,7 @@
 
         function getLatestRelease() {
             if (!releasesData || releasesData.length === 0) return null;
-            return releasesData.slice().sort((a, b) =>
-                new Date(b.created_at) - new Date(a.created_at)
-            )[0];
+            return releasesData.slice().sort((a, b) => new Date(b.created_at) - new Date(a.created_at))[0];
         }
 
         async function downloadLatestRelease() {
@@ -1188,18 +1454,14 @@
                 showNotification('loading releases...', 'info');
                 const releases = await fetchReleasesFromGitHub();
                 if (releases && releases.length > 0) {
-                    releasesData = releases.slice().sort((a, b) =>
-                        new Date(b.created_at) - new Date(a.created_at)
-                    );
+                    releasesData = releases.slice().sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
                 }
             }
-
             const latest = getLatestRelease();
             if (!latest) {
                 showNotification('failed to load releases from GitHub', 'error');
                 return;
             }
-
             downloadVersion(latest.tag_name);
         }
 
@@ -1207,19 +1469,14 @@
             const label = document.getElementById('githubDownloadLabel');
             if (!label) return;
             const latest = getLatestRelease();
-            label.textContent = latest && latest.tag_name
-                ? `github download (${latest.tag_name})`
-                : 'github download';
+            label.textContent = latest && latest.tag_name ? `github download (${latest.tag_name})` : 'github download';
         }
 
         async function fetchReleasesFromGitHub() {
             try {
                 const response = await fetch(GITHUB_API_URL, { cache: 'no-store' });
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                const releases = await response.json();
-                return releases;
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                return await response.json();
             } catch (error) {
                 return null;
             }
@@ -1228,12 +1485,9 @@
         function renderFallbackHistory(versionList) {
             versionList.innerHTML = FALLBACK_HISTORY.map((v, index) => {
                 const version = v.split(' — ')[0];
-                if (index === 0) {
-                    return `<div class="version-item now" data-version="${version}">${v} (now)</div>`;
-                }
+                if (index === 0) return `<div class="version-item now" data-version="${version}">${v} (now)</div>`;
                 return `<div class="version-item" data-version="${version}">${v}</div>`;
             }).join('');
-
             bindHistoryItems();
         }
 
@@ -1241,64 +1495,44 @@
             document.querySelectorAll('.history-page .version-item').forEach(item => {
                 item.addEventListener('click', function () {
                     const version = this.dataset.version;
-                    if (version) {
-                        downloadVersion(version);
-                    }
+                    if (version) downloadVersion(version);
                 });
             });
         }
 
         async function updateVersionInfo() {
-            const versionElement = document.getElementById('currentVersion');
             const versionList = document.getElementById('versionList');
-
             try {
                 const releases = await fetchReleasesFromGitHub();
-
                 if (releases && releases.length > 0) {
-                    const sortedReleases = releases.slice().sort((a, b) =>
-                        new Date(b.created_at) - new Date(a.created_at)
-                    );
-
+                    const sortedReleases = releases.slice().sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
                     releasesData = sortedReleases;
-
-                    const latestRelease = sortedReleases[0];
-                    currentVersionTag = latestRelease.tag_name || 'unknown';
-                    versionElement.textContent = currentVersionTag;
-                    versionElement.className = '';
+                    currentVersionTag = sortedReleases[0].tag_name || 'unknown';
 
                     let historyHtml = '';
                     sortedReleases.forEach((release, index) => {
-                        const rawDate = release.published_at || release.created_at;
-                        const date = new Date(rawDate).toLocaleDateString('ru-RU');
+                        const date = new Date(release.published_at || release.created_at).toLocaleDateString('ru-RU');
                         const version = release.tag_name || 'unknown';
                         const name = release.name && release.name !== release.tag_name ? ` — ${release.name}` : '';
-
+                        
                         if (index === 0) {
                             historyHtml += `<div class="version-item now" data-version="${version}">${version}${name} (now)</div>`;
                         } else {
                             historyHtml += `<div class="version-item" data-version="${version}">${version}${name} (${date})</div>`;
                         }
                     });
-
                     versionList.innerHTML = historyHtml;
                     bindHistoryItems();
-
                 } else {
                     currentVersionTag = FALLBACK_VERSION;
-                    versionElement.textContent = FALLBACK_VERSION;
-                    versionElement.className = '';
                     releasesData = [];
                     renderFallbackHistory(versionList);
                 }
             } catch (error) {
                 currentVersionTag = FALLBACK_VERSION;
-                versionElement.textContent = FALLBACK_VERSION;
-                versionElement.className = '';
                 releasesData = [];
                 renderFallbackHistory(versionList);
             }
-
             updateGithubButtonLabel();
         }
 
@@ -1315,36 +1549,20 @@
         function showPage(pageId, mode = 'push') {
             if (!pages[pageId]) pageId = 'main';
 
-            Object.values(pages).forEach(p => {
-                p.classList.remove('active');
-            });
-
+            Object.values(pages).forEach(p => p.classList.remove('active'));
             pages[pageId].classList.add('active');
 
-            const url = pageId === 'main'
-                ? window.location.pathname
-                : `?page=${pageId}`;
+            if (pageId === 'blog') resetBlogView();
+
+            const url = pageId === 'main' ? window.location.pathname : `?page=${pageId}`;
 
             if (mode === 'push') {
                 window.history.pushState({ page: pageId }, '', url);
             } else if (mode === 'replace') {
                 window.history.replaceState({ page: pageId }, '', url);
             }
-
             window.scrollTo({ top: 0, behavior: 'auto' });
         }
-
-        document.getElementById('versionClick').addEventListener('click', function () {
-            if (releasesData.length === 0) {
-                showNotification('version list is not loaded yet', 'error');
-                return;
-            }
-            if (currentVersionTag) {
-                downloadVersion(currentVersionTag);
-            } else {
-                showNotification('version is not loaded yet', 'error');
-            }
-        });
 
         document.getElementById('historyToggle').addEventListener('click', function (e) {
             e.preventDefault();
@@ -1355,23 +1573,19 @@
             link.addEventListener('click', function (e) {
                 e.preventDefault();
                 const page = this.dataset.page;
-                if (page) {
-                    showPage(page);
-                }
+                if (page) showPage(page);
             });
         });
 
         document.querySelectorAll('.back-link').forEach(link => {
             link.addEventListener('click', function (e) {
                 e.preventDefault();
-                const page = this.dataset.page || 'main';
-                showPage(page);
+                showPage(this.dataset.page || 'main');
             });
         });
 
         window.addEventListener('popstate', function (event) {
-            const page = event.state && event.state.page ? event.state.page : 'main';
-            showPage(page, 'none');
+            showPage(event.state && event.state.page ? event.state.page : 'main', 'none');
         });
 
         const githubDownloadBtn = document.getElementById('githubDownloadBtn');
@@ -1379,13 +1593,32 @@
             githubDownloadBtn.addEventListener('click', downloadLatestRelease);
         }
 
-        // Инициализация
+        projectSliders.zombotanic = initSlider({
+            containerId: 'sliderContainer', trackId: 'sliderTrack', dotsId: 'sliderDots',
+            prevId: 'sliderPrev', nextId: 'sliderNext', screenshots: SCREENSHOTS
+        });
+
+        projectSliders.soundhub = initSlider({
+            containerId: 'sliderContainer2', trackId: 'sliderTrack2', dotsId: 'sliderDots2',
+            prevId: 'sliderPrev2', nextId: 'sliderNext2', screenshots: SOUNDHUB_SCREENSHOTS
+        });
+
+        activeSlider = projectSliders.zombotanic;
+        setupProjectsNav();
+
+        document.addEventListener('keydown', (e) => {
+            const projectsPage = document.getElementById('projectsPage');
+            if (!projectsPage || !projectsPage.classList.contains('active')) return;
+            if (!activeSlider) return;
+            if (e.key === 'ArrowLeft') activeSlider.goToSlide(activeSlider.currentSlide - 1);
+            if (e.key === 'ArrowRight') activeSlider.goToSlide(activeSlider.currentSlide + 1);
+        });
+
         updateVersionInfo();
         setupLinks();
         setupContactsPage();
-        loadScreenshots();
-        setupItchIframe();
-        loadBlog();
+        setupAllItchIframes();
+        setupBlog();
         loadThoughts();
 
         const urlParams = new URLSearchParams(window.location.search);
