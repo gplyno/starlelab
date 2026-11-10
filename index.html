@@ -15,12 +15,12 @@
 
         /* УБИРАЕМ ПОЛОСУ ПРОКРУТКИ */
         html, body {
-            -ms-overflow-style: none;  /* IE and Edge */
-            scrollbar-width: none;     /* Firefox */
+            -ms-overflow-style: none;
+            scrollbar-width: none;
         }
         body::-webkit-scrollbar,
         html::-webkit-scrollbar {
-            display: none;             /* Chrome, Safari, Opera */
+            display: none;
             width: 0;
             height: 0;
             background: transparent;
@@ -54,14 +54,22 @@
         .topbar .brand {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
         }
 
+        /* СТИЛЬ ЛОГОТИПА: Аккуратная капсула, чтобы не терялся */
         .topbar .brand-logo {
-            height: 30px;
+            height: 32px;
             width: auto;
             display: block;
-            border-radius: 4px;
+            border-radius: 6px;
+            /* Легкая подложка и рамка */
+            background-color: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            padding: 2px 6px;
+            
+            /* РАСКОММЕНТИРУЙТЕ СТРОКУ НИЖЕ, если ваш логотип черный и вы хотите сделать его чисто белым: */
+            /* filter: brightness(0) invert(1); */
         }
 
         .topbar .brand-name {
@@ -584,6 +592,7 @@
             .main h1 { font-size: 1.5rem; }
             .topbar { padding: 0 20px; gap: 12px; flex-wrap: wrap; height: auto; min-height: 56px; }
             .topbar .brand-name { font-size: 0.9rem; }
+            .topbar .brand-logo { height: 28px; }
             .page h2 { font-size: 1.4rem; }
             .download-notification { top: 70px; font-size: 0.8rem; padding: 10px 16px; }
             .contacts-list .contact-item { flex-direction: column; gap: 2px; padding: 8px 0; }
@@ -603,7 +612,7 @@
             .blog-choice { flex: 1 1 auto; width: 100%; }
         }
 
-        /* На узких экранах (телефоны) меню проектов превращается в удобные кнопки сверху */
+        /* На узких экранах меню проектов превращается в удобные кнопки сверху */
         @media (max-width: 600px) {
             .projects-layout {
                 flex-direction: column;
@@ -1102,9 +1111,6 @@
             contactsList.innerHTML = html;
         }
 
-        /* ===== УМНАЯ ПРОВЕРКА ДЛЯ ITCH.IO ===== */
-        /* Если блокировщик рекламы или сеть не дают загрузиться фрейму, 
-           он скрывается и вместо него показывается заглушка. */
         function setupItchIframe(iframeId, infoId) {
             const iframe = document.getElementById(iframeId);
             const infoDiv = document.getElementById(infoId);
@@ -1112,20 +1118,18 @@
 
             setTimeout(() => {
                 try {
-                    // Если мы можем прочитать документ и он пустой, значит iframe заблокирован
                     const doc = iframe.contentDocument || iframe.contentWindow.document;
                     if (!doc || doc.body.innerHTML.trim() === '') {
                         infoDiv.classList.add('show');
                         iframe.style.display = 'none';
                     }
                 } catch (err) {
-                    // Если возникает SecurityError, значит кросс-доменный iframe загрузился нормально
                     if (err.name !== 'SecurityError') {
                         infoDiv.classList.add('show');
                         iframe.style.display = 'none';
                     }
                 }
-            }, 3000); // Проверяем через 3 секунды после загрузки страницы
+            }, 3000);
         }
 
         function setupAllItchIframes() {
@@ -1244,7 +1248,6 @@
             );
         }
 
-        /* ===== ПЕРЕКЛЮЧЕНИЕ ПРОЕКТОВ ===== */
         const projectSliders = {};
 
         function selectProject(key) {
